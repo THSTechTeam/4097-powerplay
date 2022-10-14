@@ -15,12 +15,10 @@ public class OldExample extends LinearOpMode {
     private DcMotor rearRight = null;
     private DcMotor carouselWheel = null;
 
-
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
 
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
@@ -57,6 +55,5 @@ public class OldExample extends LinearOpMode {
             rearRight.setPower(v4);
             carouselWheel.setPower(carouselPower);
         }
-
     }
 }
