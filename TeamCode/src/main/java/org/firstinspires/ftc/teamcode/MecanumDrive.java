@@ -19,8 +19,7 @@ public class MecanumDrive extends LinearOpMode {
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
-        // Reverse the right side motors
-        // Reverse left motors if you are using NeveRests
+        // reverse right side motors
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -31,9 +30,10 @@ public class MecanumDrive extends LinearOpMode {
         }
 
         while (opModeIsActive()) {
-            double y = -gamepad1.left_stick_y; // reversed
-            double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double rx = gamepad1.right_stick_x;
+            // 4097 driver station assignees controller to gamepad2 by default
+            double y = -gamepad2.left_stick_y; // reversed
+            double x = gamepad2.left_stick_x * 1.0; // imperfect strafing fix
+            double rx = gamepad2.right_stick_x;
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio, but only when
