@@ -7,10 +7,25 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp(name="Mecanum Drive", group="TeleOp")
 public class MecanumDrive extends LinearOpMode {
-    private DcMotor motorFrontLeft = null;
+    private DcMotor motorFrontLeft  = null;
     private DcMotor motorFrontRight = null;
-    private DcMotor motorBackLeft = null;
-    private DcMotor motorBackRight = null;
+    private DcMotor motorBackLeft   = null;
+    private DcMotor motorBackRight  = null;
+
+    private final double lowPowerFactor  = 0.3;
+    private final double highPowerFactor = 0.75;
+
+    private double motorPowerFactor = lowPowerFactor;
+
+    private double getPowerFactor(final double previousPowerFactor) {
+        if (gamepad2.a) {
+            return lowPowerFactor;
+        } else if (gamepad2.b) {
+            return highPowerFactor;
+        } else {
+            return previousPowerFactor;
+        }
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -19,9 +34,9 @@ public class MecanumDrive extends LinearOpMode {
         motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
-        // reverse right side motors
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        // reverse left side motors
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
@@ -31,23 +46,28 @@ public class MecanumDrive extends LinearOpMode {
 
         while (opModeIsActive()) {
             // 4097 driver station assignees controller to gamepad2 by default
-            double y = -gamepad2.left_stick_y; // reversed
-            double x = gamepad2.left_stick_x * 1.0; // imperfect strafing fix
-            double rx = gamepad2.right_stick_x;
+            final double y = -gamepad2.left_stick_y; // reversed
+            final double x = -(gamepad2.left_stick_x * 1.0); // imperfect strafing fix & reversed
+            final double rx = gamepad2.right_stick_x;
+            final double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
 
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio, but only when
-            // at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+            double[] motorPowers = {
+                (y + x + rx) / denominator, // front left
+                (y - x + rx) / denominator, // back left
+                (y - x - rx) / denominator, // front right
+                (y + x - rx) / denominator, // back right
+            };
 
-            motorFrontLeft.setPower(frontLeftPower);
-            motorBackLeft.setPower(backLeftPower);
-            motorFrontRight.setPower(frontRightPower);
-            motorBackRight.setPower(backRightPower);
+            motorPowerFactor = getPowerFactor(motorPowerFactor);
+
+            for (int i = 0; i < motorPowers.length; i++) {
+                motorPowers[i] *= motorPowerFactor;
+            }
+
+            motorFrontLeft.setPower(motorPowers[0]);
+            motorBackLeft.setPower(motorPowers[1]);
+            motorFrontRight.setPower(motorPowers[2]);
+            motorBackRight.setPower(motorPowers[3]);
 
             idle();
         }
