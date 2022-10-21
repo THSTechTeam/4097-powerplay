@@ -2,10 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.exception.RobotCoreException;
 
 @TeleOp(name="Mecanum Drive", group="TeleOp")
 public class MecanumDrive extends LinearOpMode {
@@ -77,12 +77,13 @@ public class MecanumDrive extends LinearOpMode {
 
         while (opModeIsActive()) {
             gamepadController.update();
+
             final double ly = -gamepadController.gamepad.left_stick_y; // reversed
             final double lx = -gamepadController.gamepad.left_stick_x; // reversed
             final double rx = gamepadController.gamepad.right_stick_x;
             final double denominator = Math.max(Math.abs(ly) + Math.abs(lx) + Math.abs(rx), 1);
 
-            double[] motorPowers = {
+            final double[] motorPowers = {
                 (ly + lx + rx) / denominator, // front left
                 (ly - lx + rx) / denominator, // back left
                 (ly - lx - rx) / denominator, // front right
