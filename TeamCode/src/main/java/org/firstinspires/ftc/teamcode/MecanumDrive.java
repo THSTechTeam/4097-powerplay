@@ -2,41 +2,72 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 @TeleOp(name="Mecanum Drive", group="TeleOp")
 public class MecanumDrive extends LinearOpMode {
-    private DcMotor motorFrontLeft  = null;
-    private DcMotor motorFrontRight = null;
-    private DcMotor motorBackLeft   = null;
-    private DcMotor motorBackRight  = null;
+    // General gamepad controller, all robot specific methods will be placed inside
+    // the robot specific implementation of GamepadController.
+    private class GamepadControllerBase {
+        protected Gamepad gamepad;
+        protected Gamepad previous;
 
-    private final double lowPowerFactor  = 0.3;
-    private final double highPowerFactor = 0.75;
+        protected GamepadControllerBase() {
+            gamepad  = new Gamepad();
+            previous = new Gamepad();
+        }
 
-    private double motorPowerFactor = lowPowerFactor;
-
-    private double getPowerFactor(final double previousPowerFactor) {
-        if (gamepad2.a) {
-            return lowPowerFactor;
-        } else if (gamepad2.b) {
-            return highPowerFactor;
-        } else {
-            return previousPowerFactor;
+        // Must be called at the beginning of each while opModeIsActive() loop.
+        // NOTE: 4097 driver station assignees controller to gamepad2 by default.
+        public void update() {
+            try {
+                previous.copy(gamepad);
+                gamepad.copy(gamepad2);
+            } catch (RobotCoreException e) {
+                telemetry.addData("RobotCoreException", e.getMessage());
+                // It's ok to swallow the exception.
+                // Gamepad2 should always be valid (for 4097).
+            }
         }
     }
 
+    private class GamepadController extends GamepadControllerBase {
+        public static final double lowPowerFactor   = 0.3;
+        private static final double highPowerFactor = 0.75;
+
+        public double getPowerFactor(final double previousPowerFactor) {
+            // Rising edge detector.
+            if (!gamepadController.gamepad.a || gamepadController.previous.a) {
+                return previousPowerFactor;
+            }
+    
+            if (previousPowerFactor == lowPowerFactor) {
+                return highPowerFactor;
+            } else {
+                return lowPowerFactor;
+            }
+        }
+    }
+
+    private final GamepadController gamepadController = new GamepadController();
+
     @Override
     public void runOpMode() throws InterruptedException {
-        motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
-        motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
-        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
-        motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+        double motorPowerFactor = GamepadController.lowPowerFactor;
 
-        // reverse left side motors
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        DcMotor[] mecanumMotors = {
+            hardwareMap.dcMotor.get("motorFrontLeft"),
+            hardwareMap.dcMotor.get("motorBackLeft"),
+            hardwareMap.dcMotor.get("motorFrontRight"),
+            hardwareMap.dcMotor.get("motorBackRight"),
+        };
+
+        // Reverse left side drive motors.
+        mecanumMotors[0].setDirection(DcMotorSimple.Direction.REVERSE);
+        mecanumMotors[1].setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
@@ -45,29 +76,25 @@ public class MecanumDrive extends LinearOpMode {
         }
 
         while (opModeIsActive()) {
-            // 4097 driver station assignees controller to gamepad2 by default
-            final double y = -gamepad2.left_stick_y; // reversed
-            final double x = -(gamepad2.left_stick_x * 1.0); // imperfect strafing fix & reversed
-            final double rx = gamepad2.right_stick_x;
-            final double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+            gamepadController.update();
 
-            double[] motorPowers = {
-                (y + x + rx) / denominator, // front left
-                (y - x + rx) / denominator, // back left
-                (y - x - rx) / denominator, // front right
-                (y + x - rx) / denominator, // back right
+            final double ly = -gamepadController.gamepad.left_stick_y; // reversed
+            final double lx = -gamepadController.gamepad.left_stick_x; // reversed
+            final double rx = gamepadController.gamepad.right_stick_x;
+            final double denominator = Math.max(Math.abs(ly) + Math.abs(lx) + Math.abs(rx), 1);
+
+            final double[] motorPowers = {
+                (ly + lx + rx) / denominator, // front left
+                (ly - lx + rx) / denominator, // back left
+                (ly - lx - rx) / denominator, // front right
+                (ly + lx - rx) / denominator, // back right
             };
 
-            motorPowerFactor = getPowerFactor(motorPowerFactor);
+            motorPowerFactor = gamepadController.getPowerFactor(motorPowerFactor);
 
-            for (int i = 0; i < motorPowers.length; i++) {
-                motorPowers[i] *= motorPowerFactor;
+            for (int i = 0; i < mecanumMotors.length; i++) {
+                mecanumMotors[i].setPower(motorPowers[i] * motorPowerFactor);
             }
-
-            motorFrontLeft.setPower(motorPowers[0]);
-            motorBackLeft.setPower(motorPowers[1]);
-            motorFrontRight.setPower(motorPowers[2]);
-            motorBackRight.setPower(motorPowers[3]);
 
             idle();
         }
