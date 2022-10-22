@@ -23,15 +23,9 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
 
         // Must be called at the beginning of each while opModeIsActive() loop.
         // NOTE: 4097 driver station assignees controller to gamepad2 by default.
-        public void update() {
-            try {
-                previous.copy(gamepad);
-                gamepad.copy(gamepad2);
-            } catch (RobotCoreException e) {
-                telemetry.addData("RobotCoreException", e.getMessage());
-                // It's ok to swallow the exception.
-                // Gamepad2 should always be valid (for 4097).
-            }
+        public void update() throws RobotCoreException {
+            previous.copy(gamepad);
+            gamepad.copy(gamepad2);
         }
     }
 
