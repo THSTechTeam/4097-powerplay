@@ -28,7 +28,7 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
                 previous.copy(gamepad);
                 gamepad.copy(gamepad2);
             } catch (RobotCoreException e) {
-                // Swallow exception.
+                // Swallow exception, gamepad2 should always be valid.
             }
         }
     }
