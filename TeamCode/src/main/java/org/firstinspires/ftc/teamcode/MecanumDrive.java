@@ -27,9 +27,7 @@ public class MecanumDrive extends LinearOpMode {
                 previous.copy(gamepad);
                 gamepad.copy(gamepad2);
             } catch (RobotCoreException e) {
-                telemetry.addData("RobotCoreException", e.getMessage());
-                // It's ok to swallow the exception.
-                // Gamepad2 should always be valid (for 4097).
+                // Swallow exception, gamepad2 should always be valid.
             }
         }
     }
