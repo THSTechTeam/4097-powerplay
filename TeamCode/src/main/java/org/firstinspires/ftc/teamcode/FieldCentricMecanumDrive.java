@@ -37,25 +37,39 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
         public static final double lowPowerFactor   = 0.3;
         private static final double highPowerFactor = 0.75;
 
-        public double getPowerFactor(final double previousPowerFactor) {
-            // Rising edge detector.
-            if (!gamepadController.gamepad.a || gamepadController.previous.a) {
-                return previousPowerFactor;
-            }
-    
-            if (previousPowerFactor == lowPowerFactor) {
-                return highPowerFactor;
-            } else {
-                return lowPowerFactor;
-            }
+        public boolean currentGamepadA() {
+            return gamepad.a;
+        }
+
+        public boolean previousGamepadA() {
+            return previous.a;
         }
     }
 
-    private final GamepadController gamepadController = new GamepadController();
+    private class MotorPowerFactors {
+        public static final double lowDrive = 0.3;
+        public static final double highDrive = 0.75;
+
+        public static final double arm = 0.5;
+    }
+
+    private double getDrivePowerFactor(final double previousPowerFactor) {
+        // Rising edge detector.
+        if (!gamepadController.gamepad.a || gamepadController.previous.a) {
+            return previousPowerFactor;
+        }
+
+        if (previousPowerFactor == motorPowerFactors.lowDrive) {
+            return GamepadController.highPowerFactor;
+        } else {
+            return GamepadController.lowPowerFactor;
+        }
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
-        double motorPowerFactor = GamepadController.lowPowerFactor;
+        final GamepadController gamepadController = new GamepadController();
+        double driveMotorPowerFactor = GamepadController.lowPowerFactor;
 
         DcMotor[] mecanumMotors = {
             hardwareMap.get(DcMotor.class, "motorFrontLeft"),
@@ -63,6 +77,11 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
             hardwareMap.get(DcMotor.class, "motorFrontRight"),
             hardwareMap.get(DcMotor.class, "motorBackRight"),
         };
+
+        DcMotor armMotor = hardwareMap.get(DcMotor.class, "motorArm");
+        // enable braking mode for the arm motor
+        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        telemetry.addData("arm", armMotor.getCurrentPosition());
 
         // Reverse left side motors.
         mecanumMotors[0].setDirection(DcMotorSimple.Direction.REVERSE);
@@ -101,11 +120,16 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
                 (adjustedLy + adjustedLx - rx) / denominator, // back right
             };
 
-            motorPowerFactor = gamepadController.getPowerFactor(motorPowerFactor);
+            driveMotorPowerFactor = getDrivePowerFactor(driveMotorPowerFactor);
 
             for (int i = 0; i < motorPowers.length; i++) {
-                mecanumMotors[i].setPower(motorPowers[i] * motorPowerFactor);
+                mecanumMotors[i].setPower(motorPowers[i] * driveMotorPowerFactor);
             }
+
+            final double armMotorPowerFactor = 0.5;
+            final double armPower = gamepadController.gamepad.right_stick_y * armMotorPowerFactor;
+
+            armMotor.setPower(armPower);
 
             idle();
         }
