@@ -110,11 +110,12 @@ public class AprilTagDetectionTest extends LinearOpMode {
         }
 
         if (tagOfInterest.id == LEFT_TAG_ID || tagOfInterest == null) {
-
+            // Drive to the Left Zone.
+            // This is the default behavior in case the tag is never seen and something goes wrong.
         } else if (tagOfInterest.id == CENTER_TAG_ID) {
-
+            // Drive to the Center Zone.
         } else if (tagOfInterest.id == RIGHT_TAG_ID) {
-
+            // Drive to the Right Zone.
         }
 
         /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
