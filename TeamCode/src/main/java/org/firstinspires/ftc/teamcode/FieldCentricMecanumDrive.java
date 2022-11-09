@@ -40,10 +40,8 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
     }
 
     private static class MotorPowerFactors {
-        public static final double lowDrive = 0.3;
+        public static final double lowDrive  = 0.3;
         public static final double highDrive = 0.75;
-
-        public static final double arm = 0.5;
     }
 
     private double getDrivePowerFactor(final double previousPowerFactor) {
@@ -71,11 +69,6 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
             hardwareMap.get(DcMotor.class, "motorBackRight"),
         };
 
-        DcMotor armMotor = hardwareMap.get(DcMotor.class, "motorArm");
-        // enable braking mode for the arm motor
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        telemetry.addData("arm", armMotor.getCurrentPosition());
-
         // Reverse left side motors.
         mecanumMotors[0].setDirection(DcMotorSimple.Direction.REVERSE);
         mecanumMotors[1].setDirection(DcMotorSimple.Direction.REVERSE);
@@ -96,14 +89,14 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
             gamepadController.update();
 
             final double ly = -gamepadController.gamepad.left_stick_y; // reversed
-            final double lx = -gamepadController.gamepad.left_stick_x; // reversed
+            final double lx = gamepadController.gamepad.left_stick_x;
             final double rx = gamepadController.gamepad.right_stick_x;
 
             final double botHeading = imu.getAngularOrientation().firstAngle;
 
             // Adjust the controller input by the robot's heading.
-            final double adjustedLy = ly * Math.cos(botHeading) + lx * Math.sin(botHeading);
-            final double adjustedLx = -ly * Math.sin(botHeading) + lx * Math.cos(botHeading);
+            final double adjustedLy  = ly * Math.cos(botHeading) + lx * Math.sin(botHeading);
+            final double adjustedLx  = -ly * Math.sin(botHeading) + lx * Math.cos(botHeading);
             final double denominator = Math.max(Math.abs(ly) + Math.abs(lx) + Math.abs(rx), 1);
 
             final double[] motorPowers = {
@@ -118,10 +111,6 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
             for (int i = 0; i < motorPowers.length; i++) {
                 mecanumMotors[i].setPower(motorPowers[i] * driveMotorPowerFactor);
             }
-
-            final double armPower = gamepadController.gamepad.right_stick_y * MotorPowerFactors.arm;
-
-            armMotor.setPower(armPower);
 
             idle();
         }
