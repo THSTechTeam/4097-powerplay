@@ -33,20 +33,25 @@ public class MecanumDrive extends LinearOpMode {
     }
 
     private class GamepadController extends GamepadControllerBase {
-        public static final double lowPowerFactor   = 0.3;
-        private static final double highPowerFactor = 0.75;
+        public boolean isPressedA() {
+            return gamepad.a && !previous.a;
+        }
+    }
 
-        public double getPowerFactor(final double previousPowerFactor) {
-            // Rising edge detector.
-            if (!gamepadController.gamepad.a || gamepadController.previous.a) {
-                return previousPowerFactor;
-            }
-    
-            if (previousPowerFactor == lowPowerFactor) {
-                return highPowerFactor;
-            } else {
-                return lowPowerFactor;
-            }
+    private static class MotorPowerFactors {
+        public static final double lowDrive = 0.3;
+        public static final double highDrive = 0.75;
+    }
+
+    private double getDrivePowerFactor(final double previousPowerFactor) {
+        if (!gamepadController.isPressedA()) {
+            return previousPowerFactor;
+        }
+
+        if (previousPowerFactor == MotorPowerFactors.lowDrive) {
+            return MotorPowerFactors.highDrive;
+        } else {
+            return MotorPowerFactors.lowDrive;
         }
     }
 
@@ -54,7 +59,7 @@ public class MecanumDrive extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        double motorPowerFactor = GamepadController.lowPowerFactor;
+        double motorPowerFactor = MotorPowerFactors.lowDrive;
 
         DcMotor[] mecanumMotors = {
             hardwareMap.dcMotor.get("motorFrontLeft"),
@@ -77,7 +82,7 @@ public class MecanumDrive extends LinearOpMode {
             gamepadController.update();
 
             final double ly = -gamepadController.gamepad.left_stick_y; // reversed
-            final double lx = -gamepadController.gamepad.left_stick_x; // reversed
+            final double lx = gamepadController.gamepad.left_stick_x;
             final double rx = gamepadController.gamepad.right_stick_x;
             final double denominator = Math.max(Math.abs(ly) + Math.abs(lx) + Math.abs(rx), 1);
 
@@ -88,7 +93,7 @@ public class MecanumDrive extends LinearOpMode {
                 (ly + lx - rx) / denominator, // back right
             };
 
-            motorPowerFactor = gamepadController.getPowerFactor(motorPowerFactor);
+            motorPowerFactor = getDrivePowerFactor(motorPowerFactor);
 
             for (int i = 0; i < mecanumMotors.length; i++) {
                 mecanumMotors[i].setPower(motorPowers[i] * motorPowerFactor);
