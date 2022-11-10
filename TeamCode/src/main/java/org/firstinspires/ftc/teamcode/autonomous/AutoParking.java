@@ -12,9 +12,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
-// Import axesreference and angles
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -77,8 +75,6 @@ public class AutoParking extends LinearOpMode {
     private void driveForwardOneTile(DcMotor[] driveMotors) {
         // NOTE: Currently drives without the encoder.
         // Configured for Rev Robotics HD Hex Motor 20:1
-        // 537.6 ticks per revolution
-        // 96mm diameter wheel
         final double drivePower = 0.2;
 
         for (DcMotor motor : driveMotors) {
@@ -106,8 +102,6 @@ public class AutoParking extends LinearOpMode {
     private void strafeLeftOneTile(DcMotor[] mecanumMotors) {
         // NOTE: Currently drives without the encoder.
         // Configured for Rev Robotics HD Hex Motor 20:1
-        // 537.6 ticks per revolution
-        // 96mm diameter wheel
         final double drivePower = 0.15;
 
         mecanumMotors[0].setPower(-drivePower);
@@ -125,8 +119,6 @@ public class AutoParking extends LinearOpMode {
     private void strafeRightOneTile(DcMotor[] mecanumMotors) {
         // NOTE: Currently drives without the encoder.
         // Configured for Rev Robotics HD Hex Motor 20:1
-        // 537.6 ticks per revolution
-        // 96mm diameter wheel
         final double drivePower = 0.15;
 
         mecanumMotors[0].setPower(drivePower);
@@ -241,7 +233,6 @@ public class AutoParking extends LinearOpMode {
 
         if (tagOfInterest.id == LEFT_TAG_ID) {
             // Drive to the Left Zone.
-            // This is the default behavior in case the tag is never seen and something goes wrong.
             driveForwardOneTile(mecanumMotors);
             resetHeading(mecanumMotors);
             strafeLeftOneTile(mecanumMotors);
@@ -256,46 +247,6 @@ public class AutoParking extends LinearOpMode {
         }
 
         resetHeading(mecanumMotors);
-
-        // Reset the heading, get the bot heading as close to 0 as possible using PID controls and the IMU.
-        // double headingCorrectionPower = 0.07;
-        // double botHeading = imu.getAngularOrientation().firstAngle;
-
-        // while (opModeIsActive() && botHeading != 0) {
-        //     botHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-        //     if (botHeading > 0) {
-        //         mecanumMotors[0].setPower(headingCorrectionPower);
-        //         mecanumMotors[1].setPower(headingCorrectionPower);
-        //         mecanumMotors[2].setPower(-headingCorrectionPower);
-        //         mecanumMotors[3].setPower(-headingCorrectionPower);
-        //     } else if (botHeading < 0) {
-        //         mecanumMotors[0].setPower(-headingCorrectionPower);
-        //         mecanumMotors[1].setPower(-headingCorrectionPower);
-        //         mecanumMotors[2].setPower(headingCorrectionPower);
-        //         mecanumMotors[3].setPower(headingCorrectionPower);
-        //     }
-        // }
-
-        // while (opModeIsActive() && botHeading != 0) {
-        //     if (botHeading > 0) { // Turn left.
-        //         mecanumMotors[0].setPower(headingCorrectionPower);
-        //         mecanumMotors[1].setPower(headingCorrectionPower);
-        //         mecanumMotors[2].setPower(-headingCorrectionPower);
-        //         mecanumMotors[3].setPower(-headingCorrectionPower);
-        //     } else { // Turn right.
-        //         mecanumMotors[0].setPower(-headingCorrectionPower);
-        //         mecanumMotors[1].setPower(-headingCorrectionPower);
-        //         mecanumMotors[2].setPower(headingCorrectionPower);
-        //         mecanumMotors[3].setPower(headingCorrectionPower);
-        //     }
-
-        //     botHeading = imu.getAngularOrientation().firstAngle;
-        // }
-
-        for (DcMotor motor : mecanumMotors) {
-            motor.setPower(0);
-        }
     }
 
     private void tagToTelemetry(AprilTagDetection detection) {
