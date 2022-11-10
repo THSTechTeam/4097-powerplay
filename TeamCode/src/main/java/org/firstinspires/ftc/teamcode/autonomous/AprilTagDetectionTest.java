@@ -16,7 +16,7 @@ public class AprilTagDetectionTest extends LinearOpMode {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
-    // NOTE: These values are calebration for determining the distance to the image
+    // NOTE: These values are calibration for determining the distance to the image
     // and are not needed for the Power Play season of FTC.
     static final double FEET_PER_METER = 3.28084;
     double fx = 578.272;
