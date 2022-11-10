@@ -36,7 +36,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
     private double cx;
     private double cy;
 
-    // UNITS ARE METERS
+    // All units are in meters.
     double tagsize;
     double tagsizeX;
     double tagsizeY;
@@ -62,9 +62,9 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
 
     @Override
     protected void finalize() {
-        // Might be null if createApriltagDetector() threw an exception.
+        // Could be null if createApriltagDetector() threw an exception.
         if (nativeApriltagPtr != 0) {
-            // Delete the native context we created in the constructor.
+            // Delete the native context created in the constructor.
             AprilTagDetectorJNI.releaseApriltagDetector(nativeApriltagPtr);
             nativeApriltagPtr = 0;
         } else {
@@ -91,9 +91,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
             detectionsUpdate = detections;
         }
 
-        // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
-        // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
-        for(AprilTagDetection detection : detections) {
+        for (AprilTagDetection detection : detections) {
             Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
             drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
             draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
@@ -144,15 +142,6 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
         cameraMatrix.put(2,2,1);
     }
 
-    /**
-     * Draw a 3D axis marker on a detection. (Similar to what Vuforia does)
-     *
-     * @param buf the RGB buffer on which to draw the marker
-     * @param length the length of each of the marker 'poles'
-     * @param rvec the rotation vector of the detection
-     * @param tvec the translation vector of the detection
-     * @param cameraMatrix the camera matrix used when finding the detection
-     */
     private void drawAxisMarker(Mat buf, double length, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix) {
         // The points in 3D space we wish to project onto the 2D image plane.
         // The origin of the coordinate space is assumed to be in the center of the detection.
@@ -177,20 +166,20 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
     }
 
     private void draw3dCubeMarker(Mat buf, double length, double tagWidth, double tagHeight, int thickness, Mat rvec, Mat tvec, Mat cameraMatrix) {
-        //axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
+        // axis = np.float32([[0,0,0], [0,3,0], [3,3,0], [3,0,0],
         //       [0,0,-3],[0,3,-3],[3,3,-3],[3,0,-3] ])
 
         // The points in 3D space we wish to project onto the 2D image plane.
         // The origin of the coordinate space is assumed to be in the center of the detection.
         MatOfPoint3f axis = new MatOfPoint3f(
-                new Point3(-tagWidth/2, tagHeight/2,0),
-                new Point3( tagWidth/2, tagHeight/2,0),
-                new Point3( tagWidth/2,-tagHeight/2,0),
-                new Point3(-tagWidth/2,-tagHeight/2,0),
-                new Point3(-tagWidth/2, tagHeight/2,-length),
-                new Point3( tagWidth/2, tagHeight/2,-length),
-                new Point3( tagWidth/2,-tagHeight/2,-length),
-                new Point3(-tagWidth/2,-tagHeight/2,-length));
+                new Point3(-tagWidth / 2, tagHeight  / 2, 0),
+                new Point3(tagWidth  / 2, tagHeight  / 2, 0),
+                new Point3(tagWidth  / 2, -tagHeight / 2, 0),
+                new Point3(-tagWidth / 2, -tagHeight / 2, 0),
+                new Point3(-tagWidth / 2, tagHeight  / 2, -length),
+                new Point3(tagWidth  / 2, tagHeight  / 2, -length),
+                new Point3(tagWidth  / 2, -tagHeight / 2, -length),
+                new Point3(-tagWidth / 2, -tagHeight / 2, -length));
 
         // Project those points.
         MatOfPoint2f matProjectedPoints = new MatOfPoint2f();
@@ -198,15 +187,9 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
         Point[] projectedPoints = matProjectedPoints.toArray();
 
         // Pillars.
-        for(int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++) {
             Imgproc.line(buf, projectedPoints[i], projectedPoints[i+4], blue, thickness);
         }
-
-        // Base lines.
-        //Imgproc.line(buf, projectedPoints[0], projectedPoints[1], blue, thickness);
-        //Imgproc.line(buf, projectedPoints[1], projectedPoints[2], blue, thickness);
-        //Imgproc.line(buf, projectedPoints[2], projectedPoints[3], blue, thickness);
-        //Imgproc.line(buf, projectedPoints[3], projectedPoints[0], blue, thickness);
 
         // Top lines.
         Imgproc.line(buf, projectedPoints[4], projectedPoints[5], green, thickness);
@@ -215,16 +198,6 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
         Imgproc.line(buf, projectedPoints[4], projectedPoints[7], green, thickness);
     }
 
-    /**
-     * Extracts 6DOF pose from a trapezoid, using a camera intrinsics matrix and the
-     * original size of the tag.
-     *
-     * @param points the points which form the trapezoid
-     * @param cameraMatrix the camera intrinsics matrix
-     * @param tagsizeX the original width of the tag
-     * @param tagsizeY the original height of the tag
-     * @return the 6DOF pose of the camera relative to the tag
-     */
     private Pose poseFromTrapezoid(Point[] points, Mat cameraMatrix, double tagsizeX , double tagsizeY) {
         // The actual 2d points of the tag detected in the image
         MatOfPoint2f points2d = new MatOfPoint2f(points);
@@ -237,17 +210,14 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
         arrayPoints3d[3] = new Point3(-tagsizeX/2, -tagsizeY/2, 0);
         MatOfPoint3f points3d = new MatOfPoint3f(arrayPoints3d);
 
-        // Using this information, actually solve for pose
+        // Using this information, actually solve for pose.
         Pose pose = new Pose();
         Calib3d.solvePnP(points3d, points2d, cameraMatrix, new MatOfDouble(), pose.rvec, pose.tvec, false);
 
         return pose;
     }
 
-    /*
-     * A simple container to hold both rotation and translation
-     * vectors, which together form a 6DOF pose.
-     */
+    // Used for holding both the rotation and translation vectors.
     private static class Pose {
         private Mat rvec;
         private Mat tvec;
