@@ -250,6 +250,10 @@ public class AutoParking extends LinearOpMode {
     }
 
     private void tagToTelemetry(AprilTagDetection detection) {
-        telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+        try {
+            telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
+        } catch (NullPointerException e) {
+            telemetry.addLine("No tag ID available.");
+        }
     }
 }
