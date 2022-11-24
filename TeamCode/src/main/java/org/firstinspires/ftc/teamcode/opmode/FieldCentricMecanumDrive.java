@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,13 +22,12 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
         }
 
         // Must be called at the beginning of each while opModeIsActive() loop.
-        // NOTE: 4097 driver station assignees controller to gamepad2 by default.
         protected void update() {
             try {
                 previous.copy(gamepad);
-                gamepad.copy(gamepad2);
+                gamepad.copy(gamepad1);
             } catch (RobotCoreException e) {
-                // Swallow exception, gamepad2 should always be valid.
+                // Swallow exception, gamepad1 should always be valid.
             }
         }
     }
