@@ -14,7 +14,7 @@ public class ParkingLocationAnalyzer {
     private final OpenCvCamera camera;
     private final AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
-    private static final int CAMERA_WIDTH = 640;
+    private static final int CAMERA_WIDTH  = 640;
     private static final int CAMERA_HEIGHT = 480;
 
     // NOTE: These values are calibration for determining the distance to the image.
