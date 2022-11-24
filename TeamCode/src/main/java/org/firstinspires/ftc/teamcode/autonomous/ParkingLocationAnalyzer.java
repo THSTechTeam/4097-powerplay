@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import androidx.annotation.Nullable;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -56,7 +58,7 @@ public class ParkingLocationAnalyzer {
         });
     }
 
-    public ParkingLocation getParkingLocation() {
+    public @Nullable ParkingLocation getParkingLocation() {
         ArrayList<AprilTagDetection> detections = aprilTagDetectionPipeline.getLatestDetections();
 
         if (detections.size() == 0) {
