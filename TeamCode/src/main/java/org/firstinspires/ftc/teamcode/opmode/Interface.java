@@ -50,65 +50,65 @@ public class Interface {
 
     public static class GamepadController extends GamepadControllerBase {
         public double getLeftStickX() {
-            return gamepad.left_stick_x;
+            return this.gamepad.left_stick_x;
         }
 
         public double getLeftStickY() {
-            return gamepad.left_stick_y;
+            return this.gamepad.left_stick_y;
         }
 
         public double getRightStickX() {
-            return gamepad.right_stick_x;
+            return this.gamepad.right_stick_x;
         }
 
         public double getRightStickY() {
-            return gamepad.right_stick_y;
+            return this.gamepad.right_stick_y;
         }
 
         public boolean isPressed(GamepadButton gamepadButton) {
             switch (gamepadButton) {
                 case A:
-                    return gamepad.a && !previous.a;
+                    return this.gamepad.a && !this.previous.a;
                 case B:
-                    return gamepad.b && !previous.b;
+                    return this.gamepad.b && !this.previous.b;
                 case X:
-                    return gamepad.x && !previous.x;
+                    return this.gamepad.x && !this.previous.x;
                 case Y:
-                    return gamepad.y && !previous.y;
+                    return this.gamepad.y && !this.previous.y;
                 case DPAD_UP:
-                    return gamepad.dpad_up && !previous.dpad_up;
+                    return this.gamepad.dpad_up && !this.previous.dpad_up;
                 case DPAD_DOWN:
-                    return gamepad.dpad_down && !previous.dpad_down;
+                    return this.gamepad.dpad_down && !this.previous.dpad_down;
                 case DPAD_LEFT:
-                    return gamepad.dpad_left && !previous.dpad_left;
+                    return this.gamepad.dpad_left && !this.previous.dpad_left;
                 case DPAD_RIGHT:
-                    return gamepad.dpad_right && !previous.dpad_right;
+                    return this.gamepad.dpad_right && !this.previous.dpad_right;
                 case LEFT_BUMPER:
-                    return gamepad.left_bumper && !previous.left_bumper;
+                    return this.gamepad.left_bumper && !this.previous.left_bumper;
                 case RIGHT_BUMPER:
-                    return gamepad.right_bumper && !previous.right_bumper;
+                    return this.gamepad.right_bumper && !this.previous.right_bumper;
                 case LEFT_STICK_BUTTON:
-                    return gamepad.left_stick_button && !previous.left_stick_button;
+                    return this.gamepad.left_stick_button && !this.previous.left_stick_button;
                 case RIGHT_STICK_BUTTON:
-                    return gamepad.right_stick_button && !previous.right_stick_button;
+                    return this.gamepad.right_stick_button && !this.previous.right_stick_button;
                 case GUIDE:
-                    return gamepad.guide && !previous.guide;
+                    return this.gamepad.guide && !this.previous.guide;
                 case START:
-                    return gamepad.start && !previous.start;
+                    return this.gamepad.start && !this.previous.start;
                 case BACK:
-                    return gamepad.back && !previous.back;
+                    return this.gamepad.back && !this.previous.back;
                 case LEFT_TRIGGER:
-                    return gamepad.left_trigger > 0.0 && previous.left_trigger == 0.0;
+                    return this.gamepad.left_trigger > 0.0 && this.previous.left_trigger == 0.0;
                 case RIGHT_TRIGGER:
-                    return gamepad.right_trigger > 0.0 && previous.right_trigger == 0.0;
+                    return this.gamepad.right_trigger > 0.0 && this.previous.right_trigger == 0.0;
                 case LEFT_STICK_X:
-                    return gamepad.left_stick_x != previous.left_stick_x;
+                    return this.gamepad.left_stick_x != this.previous.left_stick_x;
                 case LEFT_STICK_Y:
-                    return gamepad.left_stick_y != previous.left_stick_y;
+                    return this.gamepad.left_stick_y != this.previous.left_stick_y;
                 case RIGHT_STICK_X:
-                    return gamepad.right_stick_x != previous.right_stick_x;
+                    return this.gamepad.right_stick_x != this.previous.right_stick_x;
                 case RIGHT_STICK_Y:
-                    return gamepad.right_stick_y != previous.right_stick_y;
+                    return this.gamepad.right_stick_y != this.previous.right_stick_y;
                 default:
                     return false;
             }
@@ -117,47 +117,47 @@ public class Interface {
         public boolean isHeld(GamepadButton gamepadButton) {
             switch (gamepadButton) {
                 case A:
-                    return gamepad.a;
+                    return this.gamepad.a;
                 case B:
-                    return gamepad.b;
+                    return this.gamepad.b;
                 case X:
-                    return gamepad.x;
+                    return this.gamepad.x;
                 case Y:
-                    return gamepad.y;
+                    return this.gamepad.y;
                 case DPAD_UP:
-                    return gamepad.dpad_up;
+                    return this.gamepad.dpad_up;
                 case DPAD_DOWN:
-                    return gamepad.dpad_down;
+                    return this.gamepad.dpad_down;
                 case DPAD_LEFT:
-                    return gamepad.dpad_left;
+                    return this.gamepad.dpad_left;
                 case DPAD_RIGHT:
-                    return gamepad.dpad_right;
+                    return this.gamepad.dpad_right;
                 case LEFT_BUMPER:
-                    return gamepad.left_bumper;
+                    return this.gamepad.left_bumper;
                 case RIGHT_BUMPER:
-                    return gamepad.right_bumper;
+                    return this.gamepad.right_bumper;
                 case LEFT_STICK_BUTTON:
-                    return gamepad.left_stick_button;
+                    return this.gamepad.left_stick_button;
                 case RIGHT_STICK_BUTTON:
-                    return gamepad.right_stick_button;
+                    return this.gamepad.right_stick_button;
                 case GUIDE:
-                    return gamepad.guide;
+                    return this.gamepad.guide;
                 case START:
-                    return gamepad.start;
+                    return this.gamepad.start;
                 case BACK:
-                    return gamepad.back;
+                    return this.gamepad.back;
                 case LEFT_TRIGGER:
-                    return gamepad.left_trigger > 0.0;
+                    return this.gamepad.left_trigger > 0.0;
                 case RIGHT_TRIGGER:
-                    return gamepad.right_trigger > 0.0;
+                    return this.gamepad.right_trigger > 0.0;
                 case LEFT_STICK_X:
-                    return gamepad.left_stick_x != 0.0;
+                    return this.gamepad.left_stick_x != 0.0;
                 case LEFT_STICK_Y:
-                    return gamepad.left_stick_y != 0.0;
+                    return this.gamepad.left_stick_y != 0.0;
                 case RIGHT_STICK_X:
-                    return gamepad.right_stick_x != 0.0;
+                    return this.gamepad.right_stick_x != 0.0;
                 case RIGHT_STICK_Y:
-                    return gamepad.right_stick_y != 0.0;
+                    return this.gamepad.right_stick_y != 0.0;
                 default:
                     return false;
             }
