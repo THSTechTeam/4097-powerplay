@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -22,12 +21,8 @@ public class MecanumDrive extends LinearOpMode {
 
         // Must be called at the beginning of each while opModeIsActive() loop.
         protected void update() {
-            try {
-                previous.copy(gamepad);
-                gamepad.copy(gamepad1);
-            } catch (RobotCoreException e) {
-                // Swallow exception, gamepad1 should always be valid.
-            }
+            previous.copy(gamepad);
+            gamepad.copy(gamepad1);
         }
     }
 
