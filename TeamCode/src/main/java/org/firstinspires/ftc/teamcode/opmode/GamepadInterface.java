@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode;
 import com.qualcomm.robotcore.exception.RobotCoreException;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-public class Interface {
+public class GamepadInterface {
     private static abstract class GamepadControllerBase {
         protected Gamepad gamepad;
         protected Gamepad previous;

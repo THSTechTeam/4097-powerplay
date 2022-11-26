@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.opmode.Interface.GamepadController;
-import static org.firstinspires.ftc.teamcode.opmode.Interface.GamepadButton;
+import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadController;
+import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadButton;
 
 @TeleOp(name="Mecanum Drive", group="TeleOp")
 public class MecanumDrive extends LinearOpMode {
