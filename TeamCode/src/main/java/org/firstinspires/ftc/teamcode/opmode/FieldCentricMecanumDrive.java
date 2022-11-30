@@ -79,7 +79,7 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
 
             driveMotorPowerFactor = getDrivePowerFactor(driveMotorPowerFactor);
 
-            motorFrontRight.setPower(((adjustedLy + adjustedLx + rx) / denominator) * driveMotorPowerFactor);
+            motorFrontLeft.setPower(((adjustedLy + adjustedLx + rx) / denominator) * driveMotorPowerFactor);
             motorBackLeft.setPower(((adjustedLy - adjustedLx + rx) / denominator) * driveMotorPowerFactor);
             motorFrontRight.setPower(((adjustedLy - adjustedLx - rx) / denominator) * driveMotorPowerFactor);
             motorBackRight.setPower(((adjustedLy + adjustedLx - rx) / denominator) * driveMotorPowerFactor);
