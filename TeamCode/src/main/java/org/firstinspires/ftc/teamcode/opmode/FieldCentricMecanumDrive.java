@@ -4,50 +4,29 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadController;
+import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadButton;
 
 @TeleOp(name="Field Centric Mecanum Drive", group="TeleOp")
 public class FieldCentricMecanumDrive extends LinearOpMode {
-    // General gamepad controller, all robot specific methods will be placed inside
-    // the robot specific implementation of GamepadController.
-    private class GamepadControllerBase {
-        protected Gamepad gamepad;
-        protected Gamepad previous;
+    private DcMotorEx motorFrontLeft;
+    private DcMotorEx motorFrontRight;
+    private DcMotorEx motorBackLeft;
+    private DcMotorEx motorBackRight;
+    private List<DcMotorEx> mecanumMotors;
 
-        protected GamepadControllerBase() {
-            gamepad  = new Gamepad();
-            previous = new Gamepad();
-        }
-
-        // Must be called at the beginning of each while opModeIsActive() loop.
-        protected void update() {
-            previous.copy(gamepad);
-            gamepad.copy(gamepad1);
-        }
-    }
-
-    private class GamepadController extends GamepadControllerBase {
-        public boolean isPressedA() {
-            return gamepad.a && !previous.a;
-        }
-    }
+    private BNO055IMU imu;
 
     private static class MotorPowerFactors {
         public static final double lowDrive  = 0.3;
-        public static final double highDrive = 0.75;
-    }
-
-    private double getDrivePowerFactor(final double previousPowerFactor) {
-        if (!gamepadController.isPressedA()) {
-            return previousPowerFactor;
-        }
-
-        if (previousPowerFactor == MotorPowerFactors.lowDrive) {
-            return MotorPowerFactors.highDrive;
-        } else {
-            return MotorPowerFactors.lowDrive;
-        }
+        public static final double highDrive = 0.6;
     }
 
     private final GamepadController gamepadController = new GamepadController();
@@ -56,19 +35,24 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         double driveMotorPowerFactor = MotorPowerFactors.lowDrive;
 
-        DcMotor[] mecanumMotors = {
-            hardwareMap.get(DcMotor.class, "motorFrontLeft"),
-            hardwareMap.get(DcMotor.class, "motorBackLeft"),
-            hardwareMap.get(DcMotor.class, "motorFrontRight"),
-            hardwareMap.get(DcMotor.class, "motorBackRight"),
-        };
+        motorFrontLeft  = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
+        motorBackLeft   = hardwareMap.get(DcMotorEx.class, "motorBackLeft");
+        motorFrontRight = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
+        motorBackRight  = hardwareMap.get(DcMotorEx.class, "motorBackRight");
 
-        // Reverse left side motors.
-        mecanumMotors[0].setDirection(DcMotorSimple.Direction.REVERSE);
-        mecanumMotors[1].setDirection(DcMotorSimple.Direction.REVERSE);
+        mecanumMotors = Arrays.asList(motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight);
 
-        // Retrieve imu from hardware map.
-        BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
+        for (DcMotorEx motor : mecanumMotors) {
+            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
+            motor.setMotorType(motorConfigurationType);
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
         imu.initialize(parameters);
@@ -80,33 +64,39 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
         }
 
         while (opModeIsActive()) {
-            gamepadController.update();
+            gamepadController.update(gamepad1);
 
-            final double ly = -gamepadController.gamepad.left_stick_y; // reversed
-            final double lx = gamepadController.gamepad.left_stick_x;
-            final double rx = gamepadController.gamepad.right_stick_x;
+            double ly = -gamepadController.getLeftStickY(); // reversed
+            double lx = gamepadController.getLeftStickX();
+            double rx = gamepadController.getRightStickX();
 
-            final double botHeading = imu.getAngularOrientation().firstAngle;
+            double botHeading = imu.getAngularOrientation().firstAngle;
 
             // Adjust the controller input by the robot's heading.
-            final double adjustedLy  = ly * Math.cos(botHeading) + lx * Math.sin(botHeading);
-            final double adjustedLx  = -ly * Math.sin(botHeading) + lx * Math.cos(botHeading);
-            final double denominator = Math.max(Math.abs(ly) + Math.abs(lx) + Math.abs(rx), 1);
-
-            final double[] motorPowers = {
-                (adjustedLy + adjustedLx + rx) / denominator, // front left
-                (adjustedLy - adjustedLx + rx) / denominator, // back left
-                (adjustedLy - adjustedLx - rx) / denominator, // front right
-                (adjustedLy + adjustedLx - rx) / denominator, // back right
-            };
+            double adjustedLy  = ly * Math.cos(botHeading) + lx * Math.sin(botHeading);
+            double adjustedLx  = -ly * Math.sin(botHeading) + lx * Math.cos(botHeading);
+            double denominator = Math.max(Math.abs(adjustedLy) + Math.abs(adjustedLx) + Math.abs(rx), 1);
 
             driveMotorPowerFactor = getDrivePowerFactor(driveMotorPowerFactor);
 
-            for (int i = 0; i < motorPowers.length; i++) {
-                mecanumMotors[i].setPower(motorPowers[i] * driveMotorPowerFactor);
-            }
+            motorFrontLeft.setPower(((adjustedLy + adjustedLx + rx) / denominator) * driveMotorPowerFactor);
+            motorBackLeft.setPower(((adjustedLy - adjustedLx + rx) / denominator) * driveMotorPowerFactor);
+            motorFrontRight.setPower(((adjustedLy - adjustedLx - rx) / denominator) * driveMotorPowerFactor);
+            motorBackRight.setPower(((adjustedLy + adjustedLx - rx) / denominator) * driveMotorPowerFactor);
 
             idle();
+        }
+    }
+
+    private double getDrivePowerFactor(double previousPowerFactor) {
+        if (!gamepadController.isPressed(GamepadButton.A)) {
+            return previousPowerFactor;
+        }
+
+        if (previousPowerFactor == MotorPowerFactors.lowDrive) {
+            return MotorPowerFactors.highDrive;
+        } else {
+            return MotorPowerFactors.lowDrive;
         }
     }
 }

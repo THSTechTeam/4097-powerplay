@@ -68,7 +68,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
+    private DcMotorEx motorLeftFront, motorLeftRear, motorRightRear, motorRightFront;
     private List<DcMotorEx> motors;
 
     private BNO055IMU imu;
@@ -283,10 +283,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
-        rightFront.setPower(v3);
+        motorLeftFront.setPower(v);
+        motorLeftRear.setPower(v1);
+        motorRightRear.setPower(v2);
+        motorRightFront.setPower(v3);
     }
 
     @Override

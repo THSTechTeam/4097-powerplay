@@ -3,50 +3,27 @@ package org.firstinspires.ftc.teamcode.opmode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadController;
+import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadButton;
 
 @TeleOp(name="Mecanum Drive", group="TeleOp")
 public class MecanumDrive extends LinearOpMode {
-    // General gamepad controller, all robot specific methods will be placed inside
-    // the robot specific implementation of GamepadController.
-    private class GamepadControllerBase {
-        protected Gamepad gamepad;
-        protected Gamepad previous;
-
-        protected GamepadControllerBase() {
-            gamepad  = new Gamepad();
-            previous = new Gamepad();
-        }
-
-        // Must be called at the beginning of each while opModeIsActive() loop.
-        protected void update() {
-            previous.copy(gamepad);
-            gamepad.copy(gamepad1);
-        }
-    }
-
-    private class GamepadController extends GamepadControllerBase {
-        public boolean isPressedA() {
-            return gamepad.a && !previous.a;
-        }
-    }
+    private DcMotorEx motorFrontLeft;
+    private DcMotorEx motorFrontRight;
+    private DcMotorEx motorBackLeft;
+    private DcMotorEx motorBackRight;
+    private List<DcMotorEx> mecanumMotors;
 
     private static class MotorPowerFactors {
-        public static final double lowDrive = 0.3;
-        public static final double highDrive = 0.75;
-    }
-
-    private double getDrivePowerFactor(final double previousPowerFactor) {
-        if (!gamepadController.isPressedA()) {
-            return previousPowerFactor;
-        }
-
-        if (previousPowerFactor == MotorPowerFactors.lowDrive) {
-            return MotorPowerFactors.highDrive;
-        } else {
-            return MotorPowerFactors.lowDrive;
-        }
+        public static final double lowDrive  = 0.3;
+        public static final double highDrive = 0.6;
     }
 
     private final GamepadController gamepadController = new GamepadController();
@@ -55,16 +32,22 @@ public class MecanumDrive extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         double motorPowerFactor = MotorPowerFactors.lowDrive;
 
-        DcMotor[] mecanumMotors = {
-            hardwareMap.dcMotor.get("motorFrontLeft"),
-            hardwareMap.dcMotor.get("motorBackLeft"),
-            hardwareMap.dcMotor.get("motorFrontRight"),
-            hardwareMap.dcMotor.get("motorBackRight"),
-        };
+        motorFrontLeft  = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
+        motorBackLeft   = hardwareMap.get(DcMotorEx.class, "motorBackLeft");
+        motorFrontRight = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
+        motorBackRight  = hardwareMap.get(DcMotorEx.class, "motorBackRight");
 
-        // Reverse left side drive motors.
-        mecanumMotors[0].setDirection(DcMotorSimple.Direction.REVERSE);
-        mecanumMotors[1].setDirection(DcMotorSimple.Direction.REVERSE);
+        mecanumMotors = Arrays.asList(motorFrontLeft, motorBackLeft, motorFrontRight, motorBackRight);
+
+        for (DcMotorEx motor : mecanumMotors) {
+            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
+            motor.setMotorType(motorConfigurationType);
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
+        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
@@ -73,27 +56,33 @@ public class MecanumDrive extends LinearOpMode {
         }
 
         while (opModeIsActive()) {
-            gamepadController.update();
+            gamepadController.update(gamepad1);
 
-            final double ly = -gamepadController.gamepad.left_stick_y; // reversed
-            final double lx = gamepadController.gamepad.left_stick_x;
-            final double rx = gamepadController.gamepad.right_stick_x;
-            final double denominator = Math.max(Math.abs(ly) + Math.abs(lx) + Math.abs(rx), 1);
-
-            final double[] motorPowers = {
-                (ly + lx + rx) / denominator, // front left
-                (ly - lx + rx) / denominator, // back left
-                (ly - lx - rx) / denominator, // front right
-                (ly + lx - rx) / denominator, // back right
-            };
+            double ly = -gamepadController.getLeftStickY(); // reversed
+            double lx = gamepadController.getLeftStickX();
+            double rx = gamepadController.getRightStickX();
+            double denominator = Math.max(Math.abs(ly) + Math.abs(lx) + Math.abs(rx), 1);
 
             motorPowerFactor = getDrivePowerFactor(motorPowerFactor);
 
-            for (int i = 0; i < mecanumMotors.length; i++) {
-                mecanumMotors[i].setPower(motorPowers[i] * motorPowerFactor);
-            }
+            motorFrontLeft.setPower(((ly + lx + rx) / denominator) * motorPowerFactor);
+            motorBackLeft.setPower(((ly - lx + rx) / denominator) * motorPowerFactor);
+            motorFrontRight.setPower(((ly - lx - rx) / denominator) * motorPowerFactor);
+            motorBackRight.setPower(((ly + lx - rx) / denominator) * motorPowerFactor);
 
             idle();
+        }
+    }
+
+    private double getDrivePowerFactor(double previousPowerFactor) {
+        if (!gamepadController.isPressed(GamepadButton.A)) {
+            return previousPowerFactor;
+        }
+
+        if (previousPowerFactor == MotorPowerFactors.lowDrive) {
+            return MotorPowerFactors.highDrive;
+        } else {
+            return MotorPowerFactors.lowDrive;
         }
     }
 }

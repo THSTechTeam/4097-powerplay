@@ -1,7 +1,7 @@
 repositories {
     mavenCentral()
     google() // Needed for androidx
-    maven { url = 'https://maven.brott.dev/' } // Needed for Roadruner
+    maven { url = 'https://maven.brott.dev/' } // Needed for Roadrunner
     flatDir {
         dirs rootProject.file('libs')
     }

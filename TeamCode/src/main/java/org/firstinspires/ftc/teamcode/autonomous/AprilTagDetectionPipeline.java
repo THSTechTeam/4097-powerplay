@@ -78,7 +78,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGBA2GRAY);
 
         synchronized (decimationSync) {
-            if(needToSetDecimation) {
+            if (needToSetDecimation) {
                 AprilTagDetectorJNI.setApriltagDetectorDecimation(nativeApriltagPtr, decimation);
                 needToSetDecimation = false;
             }
@@ -93,7 +93,7 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
 
         for (AprilTagDetection detection : detections) {
             Pose pose = poseFromTrapezoid(detection.corners, cameraMatrix, tagsizeX, tagsizeY);
-            drawAxisMarker(input, tagsizeY/2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
+            drawAxisMarker(input, tagsizeY / 2.0, 6, pose.rvec, pose.tvec, cameraMatrix);
             draw3dCubeMarker(input, tagsizeX, tagsizeX, tagsizeY, 5, pose.rvec, pose.tvec, cameraMatrix);
         }
 
@@ -179,7 +179,8 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
                 new Point3(-tagWidth / 2, tagHeight  / 2, -length),
                 new Point3(tagWidth  / 2, tagHeight  / 2, -length),
                 new Point3(tagWidth  / 2, -tagHeight / 2, -length),
-                new Point3(-tagWidth / 2, -tagHeight / 2, -length));
+                new Point3(-tagWidth / 2, -tagHeight / 2, -length)
+        );
 
         // Project those points.
         MatOfPoint2f matProjectedPoints = new MatOfPoint2f();
@@ -204,11 +205,11 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
 
         // The 3d points of the tag in an 'ideal projection'
         Point3[] arrayPoints3d = new Point3[4];
-        arrayPoints3d[0] = new Point3(-tagsizeX/2, tagsizeY/2, 0);
-        arrayPoints3d[1] = new Point3(tagsizeX/2, tagsizeY/2, 0);
-        arrayPoints3d[2] = new Point3(tagsizeX/2, -tagsizeY/2, 0);
-        arrayPoints3d[3] = new Point3(-tagsizeX/2, -tagsizeY/2, 0);
-        MatOfPoint3f points3d = new MatOfPoint3f(arrayPoints3d);
+        arrayPoints3d[0]       = new Point3(-tagsizeX/2, tagsizeY/2, 0);
+        arrayPoints3d[1]       = new Point3(tagsizeX/2, tagsizeY/2, 0);
+        arrayPoints3d[2]       = new Point3(tagsizeX/2, -tagsizeY/2, 0);
+        arrayPoints3d[3]       = new Point3(-tagsizeX/2, -tagsizeY/2, 0);
+        MatOfPoint3f points3d  = new MatOfPoint3f(arrayPoints3d);
 
         // Using this information, actually solve for pose.
         Pose pose = new Pose();
