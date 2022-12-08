@@ -41,7 +41,7 @@ public class MeetTwo extends LinearOpMode {
     }
 
     private static class ArmPIDConstants {
-        public static final double kP = 0.025;
+        public static final double kP = 0.005;
         public static final double kI = 0;
         public static final double kD = 0;
     }
@@ -88,16 +88,19 @@ public class MeetTwo extends LinearOpMode {
 
         armPIDController.setMaxMotorPower(0.5);
         armMotorPosition = ArmMotorPositions.REST;
-        setArmMotorPosition(armMotorPosition);
 
-        waitForStart();
-
-        if (isStopRequested()) {
-            return;
+        while (!isStarted() && !isStopRequested()) {
+            telemetry.addData("PID is busy", armPIDController.isBusy());
+            telemetry.addData("Motor position", motorArm.getCurrentPosition());
+            telemetry.addData("Motor power", motorArm.getPower());
+            telemetry.addData("Motor target position", armPIDController.getTargetPosition());
+            telemetry.update();
         }
 
         while (opModeIsActive()) {
             gamepadController.update(gamepad1);
+
+            setArmMotorPosition(armMotorPosition);
             armPIDController.update();
 
             double ly = -gamepadController.getLeftStickY(); // reversed
@@ -117,6 +120,11 @@ public class MeetTwo extends LinearOpMode {
                 setArmMotorPosition(armMotorPosition);
             }
 
+            telemetry.addData("PID is busy", armPIDController.isBusy());
+            telemetry.addData("Motor position", motorArm.getCurrentPosition());
+            telemetry.addData("Motor power", motorArm.getPower());
+            telemetry.addData("Motor target position", armPIDController.getTargetPosition());
+            telemetry.update();
             idle();
         }
     }
@@ -137,16 +145,16 @@ public class MeetTwo extends LinearOpMode {
         // TODO: Needs to be tuned.
         switch (armMotorPosition) {
             case UP:
-                armPIDController.setTargetPosition(0);
+                armPIDController.setTargetPosition(-166);
                 break;
             case MIDDLE:
-                armPIDController.setTargetPosition(0);
+                armPIDController.setTargetPosition(-50);
                 break;
             case DOWN:
-                armPIDController.setTargetPosition(0);
+                armPIDController.setTargetPosition(56);
                 break;
             case REST:
-                armPIDController.setTargetPosition(0);
+                armPIDController.setTargetPosition(75);
                 break;
         }
     }
