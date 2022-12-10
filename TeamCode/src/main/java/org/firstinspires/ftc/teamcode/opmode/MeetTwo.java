@@ -42,7 +42,7 @@ public class MeetTwo extends LinearOpMode {
         public static final double highDrive = 0.6;
     }
 
-    public static double kP = 0.005;
+    public static double kP = 0.03;
     public static double kI = 0;
     public static double kD = 0;
 
