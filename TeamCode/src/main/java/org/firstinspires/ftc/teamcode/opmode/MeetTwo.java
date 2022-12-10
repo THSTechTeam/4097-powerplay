@@ -10,6 +10,7 @@ package org.firstinspires.ftc.teamcode.opmode;
 
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -23,6 +24,7 @@ import java.util.List;
 import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadController;
 import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadButton;
 
+@Config
 @TeleOp(name="Meet Two", group="TeleOp")
 public class MeetTwo extends LinearOpMode {
     private DcMotorEx motorFrontLeft;
@@ -40,11 +42,9 @@ public class MeetTwo extends LinearOpMode {
         public static final double highDrive = 0.6;
     }
 
-    private static class ArmPIDConstants {
-        public static final double kP = 0.005;
-        public static final double kI = 0;
-        public static final double kD = 0;
-    }
+    public static double kP = 0.005;
+    public static double kI = 0;
+    public static double kD = 0;
 
     private enum ArmMotorPositions {
         UP,     // Scoring position.
@@ -52,6 +52,11 @@ public class MeetTwo extends LinearOpMode {
         DOWN,   // Grabbing position (Comes down on top of the cone).
         REST,   // Where the motor sits when not in use.
     }
+
+    public static double ARM_UP_POSITION     = 280;
+    public static double ARM_MIDDLE_POSITION = 130;
+    public static double ARM_DOWN_POSITION   = 28;
+    public static double ARM_REST_POSITION   = -10;
 
     private final GamepadController gamepadController = new GamepadController();
 
@@ -79,9 +84,9 @@ public class MeetTwo extends LinearOpMode {
         motorArm = hardwareMap.get(DcMotorEx.class, "motorArm");
 
         armPIDController = new PIDController(
-            ArmPIDConstants.kP, 
-            ArmPIDConstants.kI, 
-            ArmPIDConstants.kD,
+            kP, 
+            kI, 
+            kD,
             motorArm,
             DcMotorSimple.Direction.FORWARD
         );
@@ -145,16 +150,16 @@ public class MeetTwo extends LinearOpMode {
         // TODO: Needs to be tuned.
         switch (armMotorPosition) {
             case UP:
-                armPIDController.setTargetPosition(-166);
+                armPIDController.setTargetPosition(ARM_UP_POSITION);
                 break;
             case MIDDLE:
-                armPIDController.setTargetPosition(-50);
+                armPIDController.setTargetPosition(ARM_MIDDLE_POSITION);
                 break;
             case DOWN:
-                armPIDController.setTargetPosition(56);
+                armPIDController.setTargetPosition(ARM_DOWN_POSITION);
                 break;
             case REST:
-                armPIDController.setTargetPosition(75);
+                armPIDController.setTargetPosition(ARM_REST_POSITION);
                 break;
         }
     }
