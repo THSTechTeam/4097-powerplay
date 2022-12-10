@@ -120,10 +120,8 @@ public class MeetTwo extends LinearOpMode {
             motorFrontRight.setPower(((ly - lx - rx) / denominator) * motorPowerFactor);
             motorBackRight.setPower(((ly + lx - rx) / denominator) * motorPowerFactor);
 
-            if (!armPIDController.isBusy()) {
-                armMotorPosition = cycleArmMotorPosition();
-                setArmMotorPosition(armMotorPosition);
-            }
+            armMotorPosition = cycleArmMotorPosition();
+            setArmMotorPosition(armMotorPosition);
 
             telemetry.addData("PID is busy", armPIDController.isBusy());
             telemetry.addData("Motor position", motorArm.getCurrentPosition());
