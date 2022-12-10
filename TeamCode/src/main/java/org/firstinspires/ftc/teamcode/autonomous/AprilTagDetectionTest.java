@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.autonomous.ParkingLocationAnalyzer;
 import static org.firstinspires.ftc.teamcode.autonomous.ParkingLocationAnalyzer.ParkingLocation;
 
+@Disabled
 @TeleOp(name="April Tag Detection Test", group="Autonomous")
 public class AprilTagDetectionTest extends LinearOpMode {
     @Override

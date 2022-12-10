@@ -11,6 +11,7 @@ package org.firstinspires.ftc.teamcode.opmode;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -24,6 +25,7 @@ import java.util.List;
 import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadController;
 import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadButton;
 
+@Disabled
 @Config
 @TeleOp(name="Meet Two", group="TeleOp")
 public class MeetTwo extends LinearOpMode {
