@@ -22,8 +22,8 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 560;
-    public static final double MAX_RPM       = 300;
+    public static final double TICKS_PER_REV = 537.6;
+    public static final double MAX_RPM       = 312.5;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -47,7 +47,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.8898; // in
     public static double GEAR_RATIO   = 1; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH  = 13; // TODO: Currently an estimate. Units in inches.
+    public static double TRACK_WIDTH  = -11.86; // TODO: Currently an estimate. Units in inches.
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -55,9 +55,10 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV      = 1.0 / rpmToVelocity(MAX_RPM);
-    public static double kA      = 0;
-    public static double kStatic = 0;
+    // TODO: Currently tuned quite terribly but it was the best I could do without a perfectly flat drive surface.
+    public static double kV      = 0.0146;
+    public static double kA      = 0.0024;
+    public static double kStatic = 0.01;
 
     /*
      * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -68,8 +69,8 @@ public class DriveConstants {
      */
     public static double MAX_VEL       = 30; // TODO: Further tuning for velocity required.
     public static double MAX_ACCEL     = 30; // TODO: Further tuning for acceleration required.
-    public static double MAX_ANG_VEL   = Math.toRadians(222.41492307692306);
-    public static double MAX_ANG_ACCEL = Math.toRadians(222.41492307692306);
+    public static double MAX_ANG_VEL   = Math.toRadians(111.20746153846153);
+    public static double MAX_ANG_ACCEL = Math.toRadians(111.20746153846153);
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
