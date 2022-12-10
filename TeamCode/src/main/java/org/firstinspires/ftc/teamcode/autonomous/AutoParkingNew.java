@@ -29,9 +29,9 @@ public class AutoParkingNew extends LinearOpMode {
     private ParkingLocationAnalyzer parkingLocationAnalyzer;
     private ParkingLocation parkingLocation;
 
-    private Trajectory parkCenter;
-    private Trajectory parkLeft;
-    private Trajectory parkRight;
+    private Trajectory forwards;
+    private Trajectory left;
+    private Trajectory right;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -41,17 +41,16 @@ public class AutoParkingNew extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(new Pose2d());
 
-        parkCenter = drive.trajectoryBuilder(new Pose2d())
+        // Trajectories.
+        forwards = drive.trajectoryBuilder(new Pose2d())
             .forward(ONE_TILE)
             .build();
 
-        parkLeft = drive.trajectoryBuilder(new Pose2d())
-            .forward(ONE_TILE)
+        left = drive.trajectoryBuilder(new Pose2d())
             .strafeLeft(ONE_TILE)
             .build();
-        
-        parkRight = drive.trajectoryBuilder(new Pose2d())
-            .forward(ONE_TILE)
+
+        right = drive.trajectoryBuilder(new Pose2d())
             .strafeRight(ONE_TILE)
             .build();
 
@@ -69,11 +68,13 @@ public class AutoParkingNew extends LinearOpMode {
         // ^^^ End of `waitForStart()` replacement. ^^^
 
         if (parkingLocation == ParkingLocation.LEFT) {
-            drive.followTrajectory(parkLeft);
+            drive.followTrajectory(forwards);
+            drive.followTrajectory(left);
         } else if (parkingLocation == ParkingLocation.CENTER || parkingLocation == null) {
-            drive.followTrajectory(parkCenter);
+            drive.followTrajectory(forwards);
         } else if (parkingLocation == ParkingLocation.RIGHT) {
-            drive.followTrajectory(parkRight);
+            drive.followTrajectory(forwards);
+            drive.followTrajectory(right);
         }
     }
 }
