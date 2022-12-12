@@ -98,15 +98,15 @@ public class AutoParking extends LinearOpMode {
             botHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
             if (botHeading > 0) {
-                motorFrontLeft.setPower(headingCorrectionPower);
-                motorBackLeft.setPower(headingCorrectionPower);
-                motorFrontRight.setPower(-headingCorrectionPower);
-                motorBackRight.setPower(-headingCorrectionPower);
-            } else if (botHeading < 0) {
                 motorFrontLeft.setPower(-headingCorrectionPower);
                 motorBackLeft.setPower(-headingCorrectionPower);
                 motorFrontRight.setPower(headingCorrectionPower);
                 motorBackRight.setPower(headingCorrectionPower);
+            } else if (botHeading < 0) {
+                motorFrontLeft.setPower(headingCorrectionPower);
+                motorBackLeft.setPower(headingCorrectionPower);
+                motorFrontRight.setPower(-headingCorrectionPower);
+                motorBackRight.setPower(-headingCorrectionPower);
             }
         }
 
@@ -154,7 +154,7 @@ public class AutoParking extends LinearOpMode {
         motorFrontRight.setPower(drivePower);
         motorBackRight.setPower(-drivePower);
 
-        sleep((long)(TILE_METER_LENGTH / drivePower * 1000));
+        sleep((long)(TILE_METER_LENGTH / drivePower * 1100));
 
         for (DcMotorEx motor : mecanumMotors) {
             motor.setPower(0);
@@ -171,7 +171,7 @@ public class AutoParking extends LinearOpMode {
         motorFrontRight.setPower(-drivePower);
         motorBackRight.setPower(drivePower);
 
-        sleep((long)(TILE_METER_LENGTH / drivePower * 1000));
+        sleep((long)(TILE_METER_LENGTH / drivePower * 1100));
 
         for (DcMotorEx motor : mecanumMotors) {
             motor.setPower(0);
