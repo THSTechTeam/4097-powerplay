@@ -14,9 +14,9 @@ public class DeadWheelEncoderTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorFrontRight"));
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorFrontLeft"));
-        centerEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorBackRight"));
+        rightEncoder  = new Encoder(hardwareMap.get(DcMotorEx.class, "motorBackLeft"));
+        leftEncoder   = new Encoder(hardwareMap.get(DcMotorEx.class, "motorBackRight"));
+        centerEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorFrontLeft"));
 
         waitForStart();
 

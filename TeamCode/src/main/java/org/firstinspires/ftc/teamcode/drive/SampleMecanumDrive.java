@@ -20,7 +20,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityCons
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -53,12 +52,12 @@ import static org.firstinspires.ftc.teamcode.drive.DriveConstants.kV;
 @Config
 public class SampleMecanumDrive extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID       = new PIDCoefficients(0, 0, 0);
+    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
-    public static double LATERAL_MULTIPLIER = 1.276595744680851;
+    public static double LATERAL_MULTIPLIER = 1;
 
-    public static double VX_WEIGHT    = 1;
-    public static double VY_WEIGHT    = 1;
+    public static double VX_WEIGHT = 1;
+    public static double VY_WEIGHT = 1;
     public static double OMEGA_WEIGHT = 1;
 
     private TrajectorySequenceRunner trajectorySequenceRunner;
@@ -68,7 +67,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private TrajectoryFollower follower;
 
-    private DcMotorEx motorLeftFront, motorLeftRear, motorRightRear, motorRightFront;
+    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
 
     private VoltageSensor batteryVoltageSensor;
@@ -87,12 +86,12 @@ public class SampleMecanumDrive extends MecanumDrive {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        motorLeftFront  = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
-        motorLeftRear   = hardwareMap.get(DcMotorEx.class, "motorBackLeft");
-        motorRightFront = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
-        motorRightRear  = hardwareMap.get(DcMotorEx.class, "motorBackRight");
+        leftFront = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
+        leftRear = hardwareMap.get(DcMotorEx.class, "motorBackLeft");
+        rightRear = hardwareMap.get(DcMotorEx.class, "motorBackRight");
+        rightFront = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
 
-        motors = Arrays.asList(motorLeftFront, motorLeftRear, motorRightRear, motorRightFront);
+        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
@@ -110,10 +109,14 @@ public class SampleMecanumDrive extends MecanumDrive {
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        motorLeftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorLeftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        // TODO: reverse any motors using DcMotor.setDirection()
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+        rightRear.setDirection(DcMotor.Direction.REVERSE);
 
+        // TODO: if desired, use setLocalizer() to change the localization method
+        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         setLocalizer(new StandardTrackingWheelLocalizer(hardwareMap));
+
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
     }
 
@@ -255,20 +258,20 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        motorLeftFront.setPower(v);
-        motorLeftRear.setPower(v1);
-        motorRightRear.setPower(v2);
-        motorRightFront.setPower(v3);
+        leftFront.setPower(v);
+        leftRear.setPower(v1);
+        rightRear.setPower(v2);
+        rightFront.setPower(v3);
     }
 
     @Override
     public double getRawExternalHeading() {
-        return 0.0; // IMU is not in use.
+        return 0.0;
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return 0.0; // IMU is not in use.
+        return 0.0;
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
