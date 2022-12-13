@@ -29,10 +29,9 @@ public class ArmMotorTest extends LinearOpMode {
 
         PIDController motorPID = new PIDController(kP, kI, kD, motorArm, DcMotorSimple.Direction.REVERSE);
 
-        waitForStart();
-
-        if (isStopRequested()) {
-            return;
+        while (!opModeIsActive() && !isStopRequested()) {
+            telemetry.addData("Current Position", motorPID.getCurrentPosition());
+            telemetry.update();
         }
     
         while (opModeIsActive()) {
