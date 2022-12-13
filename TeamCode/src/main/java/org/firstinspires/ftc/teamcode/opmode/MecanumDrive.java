@@ -10,6 +10,8 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import java.util.Arrays;
 import java.util.List;
 
+import static org.firstinspires.ftc.teamcode.opmode.DrivePowerConstants.highDrivePower;
+import static org.firstinspires.ftc.teamcode.opmode.DrivePowerConstants.lowDrivePower;
 import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadController;
 import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadButton;
 
@@ -21,16 +23,11 @@ public class MecanumDrive extends LinearOpMode {
     private DcMotorEx motorBackRight;
     private List<DcMotorEx> mecanumMotors;
 
-    private static class MotorPowerFactors {
-        public static final double lowDrive  = 0.3;
-        public static final double highDrive = 0.6;
-    }
-
     private final GamepadController gamepadController = new GamepadController();
 
     @Override
     public void runOpMode() throws InterruptedException {
-        double motorPowerFactor = MotorPowerFactors.lowDrive;
+        double motorPowerFactor = lowDrivePower;
 
         motorFrontLeft  = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
         motorBackLeft   = hardwareMap.get(DcMotorEx.class, "motorBackLeft");
@@ -46,8 +43,8 @@ public class MecanumDrive extends LinearOpMode {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
-        motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
 
@@ -79,10 +76,10 @@ public class MecanumDrive extends LinearOpMode {
             return previousPowerFactor;
         }
 
-        if (previousPowerFactor == MotorPowerFactors.lowDrive) {
-            return MotorPowerFactors.highDrive;
+        if (previousPowerFactor == lowDrivePower) {
+            return highDrivePower;
         } else {
-            return MotorPowerFactors.lowDrive;
+            return lowDrivePower;
         }
     }
 }
