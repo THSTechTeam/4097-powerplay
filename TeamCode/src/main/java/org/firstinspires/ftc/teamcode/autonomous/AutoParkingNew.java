@@ -1,30 +1,27 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-
-import java.util.Arrays;
-import java.util.List;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.autonomous.ParkingLocationAnalyzer;
 import static org.firstinspires.ftc.teamcode.autonomous.ParkingLocationAnalyzer.ParkingLocation;
 
+@Config
 @Autonomous(name="Roadrunner Autonomous Parking", group="Autonomous")
 public class AutoParkingNew extends LinearOpMode {
-    private static final double ONE_TILE = 23.622; // inches
+    // Regardless of parking position we first need to go to the center and push the signal cone out of the way.
+    // If we are parking in the center we stop there, otherwise continue to the next point.
+    public static Vector2d CENTER_PARKING_ONE = new Vector2d(0, 40);
+    public static Vector2d CENTER_PARKING_TWO = new Vector2d(0, 30);
 
-    private DcMotorEx motorFrontLeft;
-    private DcMotorEx motorFrontRight;
-    private DcMotorEx motorBackLeft;
-    private DcMotorEx motorBackRight;
-    private List<DcMotorEx> mecanumMotors;
+    // Left and right points continue from the center parking position.
+    public static Vector2d LEFT_PARKING = new Vector2d(0, 0);
+    public static Vector2d RIGHT_PARKING = new Vector2d(0, 0);
 
     private ParkingLocationAnalyzer parkingLocationAnalyzer;
     private ParkingLocation parkingLocation;
@@ -43,15 +40,20 @@ public class AutoParkingNew extends LinearOpMode {
 
         // Trajectories.
         forwards = drive.trajectoryBuilder(new Pose2d())
-            .forward(ONE_TILE)
+            .splineToConstantHeading(CENTER_PARKING_ONE, 0)
+            .splineToConstantHeading(CENTER_PARKING_TWO, 0)
             .build();
 
         left = drive.trajectoryBuilder(new Pose2d())
-            .strafeLeft(ONE_TILE)
+            .splineToConstantHeading(CENTER_PARKING_ONE, 0)
+            .splineToConstantHeading(CENTER_PARKING_TWO, 0)
+            .splineToConstantHeading(LEFT_PARKING, Math.toRadians(90))
             .build();
 
         right = drive.trajectoryBuilder(new Pose2d())
-            .strafeRight(ONE_TILE)
+            .splineToConstantHeading(CENTER_PARKING_ONE, 0)
+            .splineToConstantHeading(CENTER_PARKING_TWO, 0)
+            .splineToConstantHeading(RIGHT_PARKING, Math.toRadians(-90))
             .build();
 
         // vvv The following loop replaces `waitForStart()`. vvv
@@ -68,13 +70,11 @@ public class AutoParkingNew extends LinearOpMode {
         // ^^^ End of `waitForStart()` replacement. ^^^
 
         if (parkingLocation == ParkingLocation.LEFT) {
-            drive.followTrajectory(forwards);
             drive.followTrajectory(left);
-        } else if (parkingLocation == ParkingLocation.CENTER || parkingLocation == null) {
-            drive.followTrajectory(forwards);
         } else if (parkingLocation == ParkingLocation.RIGHT) {
-            drive.followTrajectory(forwards);
             drive.followTrajectory(right);
+        } else {
+            drive.followTrajectory(forwards);
         }
     }
 }
