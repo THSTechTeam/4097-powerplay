@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,18 +15,19 @@ import static org.firstinspires.ftc.teamcode.opmode.DrivePowerConstants.highDriv
 import static org.firstinspires.ftc.teamcode.opmode.DrivePowerConstants.lowDrivePower;
 import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadController;
 import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadButton;
+import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
-@TeleOp(name="Field Centric Mecanum Drive", group="TeleOp")
-public class FieldCentricMecanumDrive extends LinearOpMode {
+@TeleOp(name="Roadrunner Field Centric Mecanum Drive", group="TeleOp")
+public class RoadrunnerDrive extends LinearOpMode {
     private DcMotorEx motorFrontLeft;
     private DcMotorEx motorFrontRight;
     private DcMotorEx motorBackLeft;
     private DcMotorEx motorBackRight;
     private List<DcMotorEx> mecanumMotors;
 
-    private BNO055IMU imu;
-
     private final GamepadController gamepadController = new GamepadController();
+
+    private StandardTrackingWheelLocalizer localizer;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -49,10 +50,8 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
+        localizer = new StandardTrackingWheelLocalizer(hardwareMap);
+        localizer.setPoseEstimate(new Pose2d());
 
         waitForStart();
 
@@ -62,24 +61,31 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
 
         while (opModeIsActive()) {
             gamepadController.update(gamepad1);
+            localizer.update();
 
-            double ly = -gamepadController.getLeftStickY(); // reversed
+            // Used to reset the heading to account for drift.
+            // WARNING: This can be dangerous to do accidentally BE CAREFUL!
+            if (gamepadController.isPressed(GamepadButton.X)) {
+                resetPoseEstimate();
+            }
+
+            double ly = -gamepadController.getLeftStickY();
             double lx = gamepadController.getLeftStickX();
             double rx = gamepadController.getRightStickX();
 
-            double botHeading = imu.getAngularOrientation().firstAngle;
+            // Rotate the current powers by the inverse of the bot heading.
+            double botHeading = -localizer.getPoseEstimate().getHeading();
 
-            // Adjust the controller input by the robot's heading.
             double adjustedLy  = ly * Math.cos(botHeading) + lx * Math.sin(botHeading);
             double adjustedLx  = -ly * Math.sin(botHeading) + lx * Math.cos(botHeading);
             double denominator = Math.max(Math.abs(adjustedLy) + Math.abs(adjustedLx) + Math.abs(rx), 1);
 
             driveMotorPowerFactor = getDrivePowerFactor(driveMotorPowerFactor);
 
-            motorFrontLeft.setPower(((adjustedLy + adjustedLx + rx) / denominator) * driveMotorPowerFactor);
-            motorBackLeft.setPower(((adjustedLy - adjustedLx + rx) / denominator) * driveMotorPowerFactor);
-            motorFrontRight.setPower(((adjustedLy - adjustedLx - rx) / denominator) * driveMotorPowerFactor);
-            motorBackRight.setPower(((adjustedLy + adjustedLx - rx) / denominator) * driveMotorPowerFactor);
+            motorFrontLeft.setPower((adjustedLy + adjustedLx + rx) / denominator * driveMotorPowerFactor);
+            motorBackLeft.setPower((adjustedLy - adjustedLx + rx) / denominator * driveMotorPowerFactor);
+            motorFrontRight.setPower((adjustedLy - adjustedLx - rx) / denominator * driveMotorPowerFactor);
+            motorBackRight.setPower((adjustedLy + adjustedLx - rx) / denominator * driveMotorPowerFactor);
 
             idle();
         }
@@ -95,5 +101,9 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
         } else {
             return lowDrivePower;
         }
+    }
+
+    private void resetPoseEstimate() {
+        localizer.setPoseEstimate(new Pose2d());
     }
 }
