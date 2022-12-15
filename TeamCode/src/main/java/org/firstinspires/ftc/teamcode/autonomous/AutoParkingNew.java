@@ -24,6 +24,13 @@ public class AutoParkingNew extends LinearOpMode {
     private Trajectory left_parking_one;
     private Trajectory left_parking_two;
 
+    private Trajectory center_parking_one;
+    private Trajectory center_parking_two;
+    private Trajectory center_parking_three;
+
+    private Trajectory right_parking_one;
+    private Trajectory right_parking_two;
+
     @Override
     public void runOpMode() throws InterruptedException {
         parkingLocationAnalyzer = new ParkingLocationAnalyzer(hardwareMap);
@@ -42,6 +49,26 @@ public class AutoParkingNew extends LinearOpMode {
             .build();
 
         left_parking_two = drive.trajectoryBuilder(left_parking_one.end())
+            .forward(FORWARD_DISTANCE)
+            .build();
+
+        center_parking_one = drive.trajectoryBuilder(get_off_back_wall.end())
+            .strafeLeft(STRAFE_DISTANCE)
+            .build();
+
+        center_parking_two = drive.trajectoryBuilder(center_parking_one.end())
+            .forward(FORWARD_DISTANCE)
+            .build();
+
+        center_parking_three = drive.trajectoryBuilder(center_parking_two.end())
+            .strafeRight(STRAFE_DISTANCE)
+            .build();
+
+        right_parking_one = drive.trajectoryBuilder(get_off_back_wall.end())
+            .strafeRight(STRAFE_DISTANCE)
+            .build();
+
+        right_parking_two = drive.trajectoryBuilder(right_parking_one.end())
             .forward(FORWARD_DISTANCE)
             .build();
 
@@ -64,10 +91,21 @@ public class AutoParkingNew extends LinearOpMode {
 
         switch (parkingLocation) {
             case LEFT:
-            default:
                 drive.followTrajectory(get_off_back_wall);
                 drive.followTrajectory(left_parking_one);
                 drive.followTrajectory(left_parking_two);
+                break;
+            case CENTER:
+                drive.followTrajectory(get_off_back_wall);
+                drive.followTrajectory(center_parking_one);
+                drive.followTrajectory(center_parking_two);
+                drive.followTrajectory(center_parking_three);
+                break;
+            case RIGHT:
+                drive.followTrajectory(get_off_back_wall);
+                drive.followTrajectory(right_parking_one);
+                drive.followTrajectory(right_parking_two);
+                break;
         }
     }
 }
