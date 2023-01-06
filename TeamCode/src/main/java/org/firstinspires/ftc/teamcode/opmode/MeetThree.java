@@ -65,21 +65,21 @@ public class MeetThree extends LinearOpMode {
             gamepadController.update(gamepad1);
             armPIDController.update();
 
-            if (gamepadController.isPressed(GamepadButton.A)) {
+            if (gamepadController.isPressed(GamepadButton.DPAD_DOWN)) {
                 armPIDController.setTargetPosition(ARM_UP_POSITION);
-            } else if (gamepadController.isPressed(GamepadButton.B)) {
+            } else if (gamepadController.isPressed(GamepadButton.DPAD_RIGHT)) {
                 armPIDController.setTargetPosition(ARM_MIDDLE_POSITION);
-            } else if (gamepadController.isPressed(GamepadButton.X)) {
+            } else if (gamepadController.isPressed(GamepadButton.DPAD_LEFT)) {
                 armPIDController.setTargetPosition(ARM_DOWN_POSITION);
-            } else if (gamepadController.isPressed(GamepadButton.Y)) {
+            } else if (gamepadController.isPressed(GamepadButton.DPAD_UP)) {
                 armPIDController.setTargetPosition(ARM_REST_POSITION);
             }
 
-            if (gamepadController.isHeld(GamepadButton.DPAD_UP)) {
+            if (gamepadController.isHeld(GamepadButton.RIGHT_TRIGGER)) {
                 armPIDController.setTargetPosition(
                         armPIDController.getTargetPosition() + MANUAL_ARM_INCREMENT
                     );
-            } else if (gamepadController.isHeld(GamepadButton.DPAD_DOWN)) {
+            } else if (gamepadController.isHeld(GamepadButton.LEFT_TRIGGER)) {
                 armPIDController.setTargetPosition(
                         armPIDController.getTargetPosition() - MANUAL_ARM_INCREMENT
                     );
