@@ -104,7 +104,7 @@ public class MecanumDriveManager {
     // WARNING: Doing this un-intentionally can cause the robot to drive in a direction that is not expected.
     // Before using this method ensure that the robot is facing the correct direction.
     public void resetIMUZeroHeading() {
-        imu.initialize(imu.getParameters());
+        // imu.initialize(imu.getParameters());
     }
 
     public void setMotorPowers(double power) {
