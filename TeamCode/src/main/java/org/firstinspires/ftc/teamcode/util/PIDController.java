@@ -21,12 +21,17 @@ public class PIDController {
     private double targetPosition;
     private double currentError;
     private double lastError;
+    private boolean positionSet = false;
     
     private double timeStep;
     private double lastTime;
     private final ElapsedTime elapsedTime;
 
     private double maxMotorPower = 1.0;
+
+    private boolean useEncoderConstraints = false;
+    private double minEncoderConstraint = 0;
+    private double maxEncoderConstraint = 3700;
 
     public PIDController(double kP, double kI, double kD, DcMotorEx motor, DcMotorSimple.Direction direction) {
         this.kP = kP;
@@ -44,8 +49,20 @@ public class PIDController {
         motor.setDirection(direction);
     }
 
+    public void setEncoderConstraints(double minEncoderConstraint, double maxEncoderConstraint) {
+        this.minEncoderConstraint = minEncoderConstraint;
+        this.maxEncoderConstraint = maxEncoderConstraint;
+        useEncoderConstraints = true;
+    }
+
     public void setTargetPosition(double targetPosition) {
-        this.targetPosition = targetPosition;
+        positionSet = true;
+
+        if (useEncoderConstraints) {
+            this.targetPosition = Math.max(minEncoderConstraint, Math.min(maxEncoderConstraint, targetPosition));
+        } else {
+            this.targetPosition = targetPosition;
+        }
 
         // Start the motor with proportional control.
         // This is done to simplify initialization of the lastTime variable.
@@ -54,6 +71,10 @@ public class PIDController {
     }
 
     public void update() {
+        if (!positionSet) {
+            return;
+        }
+
         timeStep = elapsedTime.milliseconds() - lastTime;
         currentError = targetPosition - motor.getCurrentPosition();
 
@@ -72,6 +93,11 @@ public class PIDController {
         lastTime = elapsedTime.milliseconds();
     }
 
+    public void resetEncoder() {
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     public void setMaxMotorPower(double maxMotorPower) {
         this.maxMotorPower = maxMotorPower;
     }
@@ -80,7 +106,7 @@ public class PIDController {
         return Math.abs(currentError) > 0.5;
     }
 
-    public double getCurrentPosition() {
+    public int getCurrentPosition() {
         return motor.getCurrentPosition();
     }
 
@@ -98,5 +124,9 @@ public class PIDController {
 
     public double getCurrentError() {
         return currentError;
+    }
+
+    public double getPower() {
+        return motor.getPower();
     }
 }
