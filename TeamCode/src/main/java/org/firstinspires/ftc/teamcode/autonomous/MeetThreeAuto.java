@@ -4,13 +4,14 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
-@Autonomous(name="Autonomous Parking", group="Autonomous")
-public class AutoParking extends LinearOpMode {
+@Autonomous(name="Meet Three Auto", group="Autonomous")
+public class MeetThreeAuto extends LinearOpMode {
     public static double ONE_TILE_DISTANCE = 23; // in
 
     private ParkingLocationAnalyzer parkingLocationAnalyzer;
@@ -22,9 +23,14 @@ public class AutoParking extends LinearOpMode {
     private TrajectorySequence center_parking;
     private TrajectorySequence right_parking;
 
+    private DcMotor armMotor;
+    public static int armPosition = 20;
+
     @Override
     public void runOpMode() throws InterruptedException {
         parkingLocationAnalyzer = new ParkingLocationAnalyzer(hardwareMap);
+        armMotor = hardwareMap.get(DcMotor.class, "motorArm");
+        armMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // Roadrunner initialization.
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
@@ -50,6 +56,12 @@ public class AutoParking extends LinearOpMode {
                 .forward(ONE_TILE_DISTANCE * 2)
                 .turn(Math.toRadians(90))
                 .build();
+
+        // Hold the arm above the ground for the duration of the autonomous.
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotor.setTargetPosition(armPosition);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(0.5);
 
         // vvv The following loop replaces `waitForStart()`. vvv
         while (!isStarted() && !isStopRequested()) {

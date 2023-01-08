@@ -13,8 +13,6 @@ import java.util.List;
 
 import static org.firstinspires.ftc.teamcode.opmode.DrivePowerConstants.highDrivePower;
 import static org.firstinspires.ftc.teamcode.opmode.DrivePowerConstants.lowDrivePower;
-import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadController;
-import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadButton;
 import org.firstinspires.ftc.teamcode.drive.StandardTrackingWheelLocalizer;
 
 @TeleOp(name="Roadrunner Field Centric Mecanum Drive", group="TeleOp")
@@ -69,9 +67,9 @@ public class RoadrunnerDrive extends LinearOpMode {
                 resetPoseEstimate();
             }
 
-            double ly = -gamepadController.getLeftStickY();
-            double lx = gamepadController.getLeftStickX();
-            double rx = gamepadController.getRightStickX();
+            double ly = -gamepadController.getStick(GamepadButton.LEFT_STICK_Y); // reversed
+            double lx = gamepadController.getStick(GamepadButton.LEFT_STICK_X);
+            double rx = gamepadController.getStick(GamepadButton.RIGHT_STICK_X);
 
             // Rotate the current powers by the inverse of the bot heading.
             double botHeading = -localizer.getPoseEstimate().getHeading();
