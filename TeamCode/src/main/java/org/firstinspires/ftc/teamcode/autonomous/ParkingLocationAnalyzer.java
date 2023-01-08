@@ -27,12 +27,6 @@ public class ParkingLocationAnalyzer {
     private static final double cy      = 221.506;
     private static final double tagSize = 0.166;
 
-    public enum ParkingLocation {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
-
     public ParkingLocationAnalyzer(HardwareMap hardwareMap) {
         int cameraMonitorViewId = hardwareMap
                                     .appContext

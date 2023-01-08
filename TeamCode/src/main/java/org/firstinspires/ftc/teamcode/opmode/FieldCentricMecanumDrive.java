@@ -63,9 +63,9 @@ public class FieldCentricMecanumDrive extends LinearOpMode {
         while (opModeIsActive()) {
             gamepadController.update(gamepad1);
 
-            double ly = -gamepadController.getLeftStickY(); // reversed
-            double lx = gamepadController.getLeftStickX();
-            double rx = gamepadController.getRightStickX();
+            double ly = -gamepadController.getStick(GamepadButton.LEFT_STICK_Y); // reversed
+            double lx = gamepadController.getStick(GamepadButton.LEFT_STICK_X);
+            double rx = gamepadController.getStick(GamepadButton.RIGHT_STICK_X);
 
             double botHeading = imu.getAngularOrientation().firstAngle;
 

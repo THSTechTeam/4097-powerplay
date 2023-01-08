@@ -9,9 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.util.MecanumDriveManager;
 
-import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadController;
-import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadButton;
-
 @Config
 @TeleOp(name="Meet Three", group="TeleOp")
 public class MeetThree extends LinearOpMode {
@@ -85,7 +82,7 @@ public class MeetThree extends LinearOpMode {
                     );
             }
 
-            if (gamepadController.isPressed(GamepadButton.LEFT_BUMPER)) {
+            if (gamepadController.isPressed(GamepadButton.RIGHT_BUMPER)) {
                 armPIDController.resetEncoder();
             }
 
