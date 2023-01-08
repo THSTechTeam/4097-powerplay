@@ -12,8 +12,6 @@ import java.util.List;
 
 import static org.firstinspires.ftc.teamcode.opmode.DrivePowerConstants.highDrivePower;
 import static org.firstinspires.ftc.teamcode.opmode.DrivePowerConstants.lowDrivePower;
-import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadController;
-import static org.firstinspires.ftc.teamcode.opmode.GamepadInterface.GamepadButton;
 
 @TeleOp(name="Mecanum Drive", group="TeleOp")
 public class MecanumDrive extends LinearOpMode {
