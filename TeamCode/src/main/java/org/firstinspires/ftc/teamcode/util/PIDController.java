@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * For more information on PID controllers, see https://docs.ftclib.org/ftclib/features/controllers.
  * 
  */
-public class PIDController {
+public class PIDController implements Runnable {
     private final double kP;
     private final double kI;
     private final double kD;
@@ -22,7 +22,7 @@ public class PIDController {
     private double currentError;
     private double lastError;
     private boolean positionSet = false;
-    
+
     private double timeStep;
     private double lastTime;
     private final ElapsedTime elapsedTime;
@@ -68,6 +68,21 @@ public class PIDController {
         // This is done to simplify initialization of the lastTime variable.
         motor.setPower(kP * (targetPosition - motor.getCurrentPosition()));
         lastTime = elapsedTime.milliseconds();
+    }
+
+    // Called at the beginning of `.start()`.
+    // Used for multi threading.
+    public void run() {
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                update();
+                // A 10ms update time is wayyy faster than if we were to loop with the FTC SDK.
+                // A typical FTC SDK loop can range from 30-50ms depending on the hardware.
+                Thread.sleep(10);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public void update() {

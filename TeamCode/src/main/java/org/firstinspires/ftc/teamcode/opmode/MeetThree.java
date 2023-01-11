@@ -47,20 +47,21 @@ public class MeetThree extends LinearOpMode {
             hardwareMap.get(DcMotorEx.class, "motorArm"),
             DcMotorSimple.Direction.REVERSE
         );
-
         armPIDController.setMaxMotorPower(1);
 
+        Thread armPIDControllerThread = new Thread(armPIDController);
+
         while (!isStarted() && !isStopRequested()) {
-            telemetry.addData("PID is busy", armPIDController.isBusy());
             telemetry.addData("Motor position", armPIDController.getCurrentPosition());
             telemetry.addData("Motor power", armPIDController.getPower());
             telemetry.addData("Motor target position", armPIDController.getTargetPosition());
             telemetry.update();
         }
 
+        armPIDControllerThread.start();
+
         while (opModeIsActive()) {
             gamepadController.update(gamepad1);
-            armPIDController.update();
 
             if (gamepadController.isPressed(GamepadButton.DPAD_DOWN)) {
                 armPIDController.setTargetPosition(ARM_UP_POSITION);
