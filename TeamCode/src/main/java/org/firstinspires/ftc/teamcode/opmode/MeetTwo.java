@@ -1,11 +1,3 @@
-/*
- * FTC Team 4097 Meet Two teleop code
- * 
- * Now that we have a functional robot (and does more than just drive), we can start to have robot specific code
- * that won't just work on every robot with four wheels. Meet two is the first meet where we will hopefully be able to 
- * score a cone. This is the teleop program towards that gaol.
- */
-
 package org.firstinspires.ftc.teamcode.opmode;
 
 import org.firstinspires.ftc.teamcode.util.PIDController;
@@ -105,9 +97,9 @@ public class MeetTwo extends LinearOpMode {
             setArmMotorPosition(armMotorPosition);
             armPIDController.update();
 
-            double ly = -gamepadController.getLeftStickY(); // reversed
-            double lx = gamepadController.getLeftStickX();
-            double rx = gamepadController.getRightStickX();
+            double ly = -gamepadController.getStick(GamepadButton.LEFT_STICK_Y); // reversed
+            double lx = gamepadController.getStick(GamepadButton.LEFT_STICK_X);
+            double rx = gamepadController.getStick(GamepadButton.RIGHT_STICK_X);
             double denominator = Math.max(Math.abs(ly) + Math.abs(lx) + Math.abs(rx), 1);
 
             motorPowerFactor = getDrivePowerFactor(motorPowerFactor);
