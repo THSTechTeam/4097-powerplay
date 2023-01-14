@@ -31,10 +31,10 @@ class AprilTagDetectionPipeline extends OpenCvPipeline {
     private final Scalar green = new Scalar(0,255,0,255);
     private final Scalar white = new Scalar(255,255,255,255);
 
-    private double fx;
-    private double fy;
-    private double cx;
-    private double cy;
+    private final double fx;
+    private final double fy;
+    private final double cx;
+    private final double cy;
 
     // All units are in meters.
     double tagsize;

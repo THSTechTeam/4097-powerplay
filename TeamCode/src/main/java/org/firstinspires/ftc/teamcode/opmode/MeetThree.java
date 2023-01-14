@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.util.PIDController;
-import org.firstinspires.ftc.teamcode.util.MecanumDriveManager;
 
 @Config
 @TeleOp(name="Meet Three", group="TeleOp")

@@ -6,6 +6,12 @@ package org.firstinspires.ftc.teamcode.opmode;
  * Provides the utility to extract what buttons are and aren't pressed.
  */
 public class GamepadController extends GamepadControllerBase {
+    public static class InvalidButtonException extends RuntimeException {
+        public InvalidButtonException(String message) {
+            super(message);
+        }
+    }
+
     public double getStick(GamepadButton stick) {
         switch (stick) {
             case LEFT_STICK_X:
@@ -17,7 +23,7 @@ public class GamepadController extends GamepadControllerBase {
             case RIGHT_STICK_Y:
                 return this.gamepad.right_stick_y;
             default:
-                return 0.0; // TODO: Add an error message. No valid stick was given.
+                throw new InvalidButtonException("Invalid stick was given as a parameter.");
         }
     }
 
@@ -66,7 +72,7 @@ public class GamepadController extends GamepadControllerBase {
             case RIGHT_STICK_Y:
                 return this.gamepad.right_stick_y != this.previous.right_stick_y;
             default:
-                return false; // TODO: Add an error.
+                throw new InvalidButtonException("Invalid button was given as a parameter.");
         }
     }
 
@@ -115,7 +121,7 @@ public class GamepadController extends GamepadControllerBase {
             case RIGHT_STICK_Y:
                 return this.gamepad.right_stick_y != 0.0;
             default:
-                return false; // TODO: Add an error.
+                throw new InvalidButtonException("Invalid button was given as a parameter.");
         }
     }
 }
