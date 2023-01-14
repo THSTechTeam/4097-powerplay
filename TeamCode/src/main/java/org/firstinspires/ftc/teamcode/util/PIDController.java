@@ -13,27 +13,33 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * 
  */
 public class PIDController {
-    private final double kP;
-    private final double kI;
-    private final double kD;
-    private final DcMotor motor;
+    protected double kP;
+    protected double kI;
+    protected double kD;
+    protected final DcMotor motor;
 
-    private double targetPosition;
-    private double currentError;
-    private double lastError;
-    private boolean positionSet = false;
-    
-    private double timeStep;
-    private double lastTime;
-    private final ElapsedTime elapsedTime;
+    protected double targetPosition;
+    protected double currentError;
+    protected double lastError;
+    protected boolean positionSet = false;
 
-    private double maxMotorPower = 1.0;
+    protected double timeStep;
+    protected double lastTime;
+    protected final ElapsedTime elapsedTime;
+
+    protected double maxMotorPower = 1.0;
 
     private boolean useEncoderConstraints = false;
-    private double minEncoderConstraint = 0;
-    private double maxEncoderConstraint = 3700;
+    private double minEncoderConstraint;
+    private double maxEncoderConstraint;
 
-    public PIDController(double kP, double kI, double kD, DcMotorEx motor, DcMotorSimple.Direction direction) {
+    public PIDController(
+            double kP,
+            double kI,
+            double kD,
+            DcMotorEx motor,
+            DcMotorSimple.Direction direction
+        ) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
@@ -44,7 +50,7 @@ public class PIDController {
         motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
         motor.setMotorType(motorConfigurationType);
         
-        // In all likelihood this behavior will never be used if the PID controller is used correctly.
+        // In all likelihood the break behavior will never be used if the PID controller is used correctly.
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); 
         motor.setDirection(direction);
     }
@@ -84,8 +90,7 @@ public class PIDController {
         double d = (kD * (currentError - lastError)) / timeStep;
         double power = p + i + d;
 
-        // Normalize the power to be between -1 and 1.
-        // Motor power input is limited to be between -1 and 1.
+        // Clip the power to the set maximum motor power.
         power = Math.max(-maxMotorPower, Math.min(maxMotorPower, power));
 
         motor.setPower(power);
@@ -100,6 +105,12 @@ public class PIDController {
 
     public void setMaxMotorPower(double maxMotorPower) {
         this.maxMotorPower = maxMotorPower;
+    }
+
+    public void setConstants(double kP, double kI, double kD) {
+        this.kP = kP;
+        this.kI = kI;
+        this.kD = kD;
     }
 
     public boolean isBusy() {
