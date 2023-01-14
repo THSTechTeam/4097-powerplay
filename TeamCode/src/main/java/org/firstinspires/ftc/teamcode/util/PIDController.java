@@ -13,9 +13,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * 
  */
 public class PIDController {
-    protected final double kP;
-    protected final double kI;
-    protected final double kD;
+    protected double kP;
+    protected double kI;
+    protected double kD;
     protected final DcMotor motor;
 
     protected double targetPosition;
@@ -33,7 +33,13 @@ public class PIDController {
     private double minEncoderConstraint;
     private double maxEncoderConstraint;
 
-    public PIDController(double kP, double kI, double kD, DcMotorEx motor, DcMotorSimple.Direction direction) {
+    public PIDController(
+            double kP,
+            double kI,
+            double kD,
+            DcMotorEx motor,
+            DcMotorSimple.Direction direction
+        ) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
@@ -44,7 +50,7 @@ public class PIDController {
         motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
         motor.setMotorType(motorConfigurationType);
         
-        // In all likelihood this behavior will never be used if the PID controller is used correctly.
+        // In all likelihood the break behavior will never be used if the PID controller is used correctly.
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); 
         motor.setDirection(direction);
     }

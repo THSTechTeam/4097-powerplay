@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class PIDFController extends PIDController {
-    private final double kF;
+    private double kF;
     private final double ticksPerDegree;
 
     public PIDFController(
@@ -33,7 +33,7 @@ public class PIDFController extends PIDController {
         double p = kP * currentError;
         double i = kI * currentError * timeStep;
         double d = kD * (currentError - lastError) / timeStep;
-        double ff = kF * targetPosition / ticksPerDegree;
+        double ff = kF * Math.cos(Math.toRadians(targetPosition / ticksPerDegree));
         double power = p + i + d + ff;
 
         // Clip the power to the set maximum motor power.
@@ -44,7 +44,6 @@ public class PIDFController extends PIDController {
         lastTime = elapsedTime.seconds();
     }
 
-    @Override
     public void setConstants(double kP, double kI, double kD, double kF) {
         this.kP = kP;
         this.kI = kI;
