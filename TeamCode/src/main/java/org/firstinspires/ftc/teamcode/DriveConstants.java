@@ -33,7 +33,7 @@ public class DriveConstants {
     public static boolean FLIP_Y        = false;
     public static boolean FLIP_ROTATION = false;
 
-    public static double LOW_DRIVE_POWER = 0.5;
+    public static double LOW_DRIVE_POWER  = 0.5;
     public static double HIGH_DRIVE_POWER = 0.75;
 
     public static double ARM_KP = 0.0;

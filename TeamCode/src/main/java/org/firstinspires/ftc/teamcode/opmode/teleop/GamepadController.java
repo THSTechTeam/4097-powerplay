@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode;
+package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 /*
  * Gamepad controller class further extends gamepadcontroller base.

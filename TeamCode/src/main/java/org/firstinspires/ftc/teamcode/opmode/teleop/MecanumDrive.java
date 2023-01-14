@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode;
+package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import java.util.Arrays;
 import java.util.List;
 
-import static org.firstinspires.ftc.teamcode.opmode.DrivePowerConstants.highDrivePower;
-import static org.firstinspires.ftc.teamcode.opmode.DrivePowerConstants.lowDrivePower;
+import static org.firstinspires.ftc.teamcode.DriveConstants.HIGH_DRIVE_POWER;
+import static org.firstinspires.ftc.teamcode.DriveConstants.LOW_DRIVE_POWER;
 
 @TeleOp(name="Mecanum Drive", group="TeleOp")
 public class MecanumDrive extends LinearOpMode {
@@ -25,7 +25,7 @@ public class MecanumDrive extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        double motorPowerFactor = lowDrivePower;
+        double motorPowerFactor = LOW_DRIVE_POWER;
 
         motorFrontLeft  = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
         motorBackLeft   = hardwareMap.get(DcMotorEx.class, "motorBackLeft");
@@ -74,10 +74,10 @@ public class MecanumDrive extends LinearOpMode {
             return previousPowerFactor;
         }
 
-        if (previousPowerFactor == lowDrivePower) {
-            return highDrivePower;
+        if (previousPowerFactor == LOW_DRIVE_POWER) {
+            return HIGH_DRIVE_POWER;
         } else {
-            return lowDrivePower;
+            return LOW_DRIVE_POWER;
         }
     }
 }

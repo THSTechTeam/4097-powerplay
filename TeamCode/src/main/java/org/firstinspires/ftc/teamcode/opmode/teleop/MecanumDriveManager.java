@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode;
+package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -9,6 +9,10 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.firstinspires.ftc.teamcode.DriveConstants.FLIP_ROTATION;
+import static org.firstinspires.ftc.teamcode.DriveConstants.FLIP_Y;
+import static org.firstinspires.ftc.teamcode.DriveConstants.FLIP_X;
 
 /*
  * Simple class to manage a four wheel mecanum drive train.
@@ -31,12 +35,6 @@ public class MecanumDriveManager {
     private List<DcMotorEx> motors;
 
     // private BNO055IMU imu;
-
-    // The following is used to correct for the fact that not every drive train is the same.
-    // Some will need to reverse different motors and some will need to reverse the input of different gamepad axes.
-    private boolean FLIP_X        = false;
-    private boolean FLIP_Y        = false;
-    private boolean FLIP_ROTATION = false;
 
     private DriveMode mode;
 

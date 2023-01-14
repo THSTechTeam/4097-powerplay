@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode;
+package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 /*
  * Current drive state of the Mecanum Drive manager
