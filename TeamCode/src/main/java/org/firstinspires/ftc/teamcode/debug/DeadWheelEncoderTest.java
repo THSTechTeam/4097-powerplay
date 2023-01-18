@@ -1,0 +1,30 @@
+package org.firstinspires.ftc.teamcode.debug;
+
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.teamcode.util.Encoder;
+
+@Autonomous(name="Dead Wheel Encoder Test", group="Debug")
+public class DeadWheelEncoderTest extends LinearOpMode {
+    private Encoder rightEncoder;
+    private Encoder leftEncoder;
+    private Encoder centerEncoder;
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+        rightEncoder  = new Encoder(hardwareMap.get(DcMotorEx.class, "motorBackLeft"));
+        leftEncoder   = new Encoder(hardwareMap.get(DcMotorEx.class, "motorBackRight"));
+        centerEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "motorFrontLeft"));
+
+        waitForStart();
+
+        while (opModeIsActive()) {
+            telemetry.addData("Right Encoder", rightEncoder.getCurrentPosition());
+            telemetry.addData("Left Encoder", leftEncoder.getCurrentPosition());
+            telemetry.addData("Center Encoder", centerEncoder.getCurrentPosition());
+            telemetry.update();
+        }
+    }
+}
