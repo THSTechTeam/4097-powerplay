@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.opmode.autonomous;
 
 public enum ParkingLocation {
     LEFT,
