@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.debug;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.autonomous.ParkingLocation;
-import org.firstinspires.ftc.teamcode.autonomous.ParkingLocationAnalyzer;
+import org.firstinspires.ftc.teamcode.opmode.autonomous.ParkingLocation;
+import org.firstinspires.ftc.teamcode.opmode.autonomous.ParkingLocationAnalyzer;
 
 @TeleOp(name="April Tag Detection Test", group="Autonomous")
 public class AprilTagDetectionTest extends LinearOpMode {
