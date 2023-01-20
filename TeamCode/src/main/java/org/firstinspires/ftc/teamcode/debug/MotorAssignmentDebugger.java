@@ -79,7 +79,7 @@ public class MotorAssignmentDebugger extends LinearOpMode {
         telemetry.addLine("Press x to continue");
         telemetry.update();
 
-        while (!gamepad1.x) {
+        while (!gamepad1.x && opModeIsActive()) {
             idle();
         }
 
@@ -109,7 +109,7 @@ public class MotorAssignmentDebugger extends LinearOpMode {
         telemetry.clearAll();
         telemetry.addLine("Spinning front right motor");
         telemetry.update();
-        drive.setMotorPowers(0, MOTOR_POWER, 0, 0);
+        drive.setMotorPowers(0, 0, 0, MOTOR_POWER);
         sleep(WAIT_TIME);
         drive.setMotorPowers(0, 0, 0, 0);
 
@@ -155,7 +155,7 @@ public class MotorAssignmentDebugger extends LinearOpMode {
         telemetry.clearAll();
         telemetry.addLine("Spinning rear left motor");
         telemetry.update();
-        drive.setMotorPowers(0, 0, 0, 1);
+        drive.setMotorPowers(0, MOTOR_POWER, 0, 0);
         sleep(WAIT_TIME);
         drive.setMotorPowers(0, 0, 0, 0);
 
@@ -186,7 +186,7 @@ public class MotorAssignmentDebugger extends LinearOpMode {
         telemetry.update();
 
         // Pause the end of the opmode to allow for the user to change the current config.
-        while (!opModeIsActive()) {
+        while (opModeIsActive()) {
             idle();
         }
     }
