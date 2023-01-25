@@ -54,8 +54,8 @@ public class MecanumDriveManager {
 
         setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // This section can add 2-3 seconds during the init phase of the robot
         // and can be quite annoying if you are not using it.
@@ -95,6 +95,15 @@ public class MecanumDriveManager {
                 FLIP_X ? -x : x,
                 FLIP_Y ? -y : y,
                 FLIP_ROTATION ? -turn : turn
+            );
+    }
+
+    public List<Double> getMotorPowers() {
+        return Arrays.asList(
+                frontLeft.getPower(),
+                frontRight.getPower(),
+                backLeft.getPower(),
+                backRight.getPower()
             );
     }
 

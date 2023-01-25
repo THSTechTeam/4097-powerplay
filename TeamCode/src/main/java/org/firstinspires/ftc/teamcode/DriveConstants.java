@@ -17,17 +17,17 @@ public class DriveConstants {
 
     public static double WHEEL_RADIUS = 1.8898; // in
     public static double GEAR_RATIO   = 1;
-    public static double TRACK_WIDTH  = 11.86; // TODO: Currently an estimate. Units in inches.
+    public static double TRACK_WIDTH  = 13.5; // TODO: Currently an estimate. Units in inches.
 
     // TODO: Currently tuned quite terribly but it was the best I could do without a perfectly flat drive surface.
-    public static double kV      = 0.01636;
+    public static double kV      = 0.0175;
     public static double kA      = 0.002;
-    public static double kStatic = 0.03746;
+    public static double kStatic = 0.001;
 
-    public static double MAX_VEL       = 30; // TODO: Further tuning for velocity required.
-    public static double MAX_ACCEL     = 30; // TODO: Further tuning for acceleration required.
-    public static double MAX_ANG_VEL   = Math.toRadians(111.20746153846153);
-    public static double MAX_ANG_ACCEL = Math.toRadians(111.20746153846153);
+    public static double MAX_VEL       = 25; // TODO: Further tuning for velocity required.
+    public static double MAX_ACCEL     = 25; // TODO: Further tuning for acceleration required.
+    public static double MAX_ANG_VEL   = Math.toRadians(100);
+    public static double MAX_ANG_ACCEL = Math.toRadians(100);
 
     public static boolean FLIP_X        = false;
     public static boolean FLIP_Y        = false;
@@ -40,6 +40,8 @@ public class DriveConstants {
     public static double ARM_KI = 0.0;
     public static double ARM_KD = 0.0;
     public static double ARM_KF = 0.0;
+
+    public static double ONE_TILE_DISTANCE = 23.0; // in
 
     public static double encoderTicksToInches(double ticks) {
         return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
