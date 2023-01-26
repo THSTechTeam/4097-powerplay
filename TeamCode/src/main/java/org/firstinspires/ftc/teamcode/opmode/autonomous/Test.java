@@ -13,11 +13,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 public class Test extends LinearOpMode {
     public static double ONE_TILE_DISTANCE = 23; // in
 
-    private TrajectorySequence left_parking; 
-    
-    // All other parking starts from the left parking position.
-    private TrajectorySequence center_parking;
-    private TrajectorySequence right_parking;
+    private TrajectorySequence forwards;
+    private TrajectorySequence backwards;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -25,30 +22,19 @@ public class Test extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         drive.setPoseEstimate(new Pose2d());
 
-        // Trajectories.
-        left_parking = drive.trajectorySequenceBuilder(new Pose2d())
-                .forward(5)
-                .turn(Math.toRadians(90))
-                .forward(ONE_TILE_DISTANCE)
-                .turn(Math.toRadians(-90))
-                .forward(ONE_TILE_DISTANCE * 2)
+        forwards = drive.trajectorySequenceBuilder(new Pose2d())
+                .forward(30)
                 .build();
 
-        center_parking = drive.trajectorySequenceBuilder(left_parking.end())
-                .turn(Math.toRadians(-90))
-                .forward(ONE_TILE_DISTANCE)
-                .turn(Math.toRadians(90))
-                .build();
-
-        right_parking = drive.trajectorySequenceBuilder(left_parking.end())
-                .turn(Math.toRadians(-90))
-                .forward(ONE_TILE_DISTANCE * 2)
-                .turn(Math.toRadians(90))
+        backwards = drive.trajectorySequenceBuilder(forwards.end())
+                .back(30)
                 .build();
 
         waitForStart();
 
-        drive.followTrajectorySequence(left_parking);
-        drive.followTrajectorySequence(center_parking);
+        while (!isStopRequested()) {
+            drive.followTrajectorySequence(forwards);
+            drive.followTrajectorySequence(backwards);
+        }
     }
 }
