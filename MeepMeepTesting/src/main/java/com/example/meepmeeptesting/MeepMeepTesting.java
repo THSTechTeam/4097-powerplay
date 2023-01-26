@@ -18,16 +18,27 @@ public class MeepMeepTesting {
     public static Vector2d RIGHT_PARKING = new Vector2d(0, 0);
 
     public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(800);
+    MeepMeep meepMeep = new MeepMeep(800);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(30, 30, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(11.5, -11.5, 0))
-                                .splineToSplineHeading(new Pose2d(38, -11.5, Math.toRadians(40)), Math.toRadians(0))
+                        drive.trajectorySequenceBuilder(new Pose2d(10, -11.5, 0))
+                                .splineToConstantHeading(new Vector2d(13, -9.5), Math.toRadians(0))
+                                .addDisplacementMarker(() -> {
+                                        // Follow next score trajectory.
+                                })
+                                .splineToSplineHeading(new Pose2d(19, -9.5, Math.toRadians(60)), Math.toRadians(0))
+                                .addDisplacementMarker(() -> {
+                                        // Drop cone.
+                                })
+                                .waitSeconds(1)
+                                // New sequence, drive backwards.
+                                .splineToSplineHeading(new Pose2d(13, -11.5, 0), Math.toRadians(180))
+                                // Continue to park.
                                 .build()
-                );
+                        );
 
         meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)
                 .setDarkMode(true)
