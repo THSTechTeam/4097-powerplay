@@ -53,9 +53,9 @@ public class MecanumDrive extends LinearOpMode {
         while (opModeIsActive()) {
             gamepadController.update(gamepad1);
 
-            double ly = -gamepadController.getStick(GamepadButton.LEFT_STICK_Y); // reversed
+            double ly = gamepadController.getStick(GamepadButton.LEFT_STICK_Y); // reversed
             double lx = gamepadController.getStick(GamepadButton.LEFT_STICK_X);
-            double rx = gamepadController.getStick(GamepadButton.RIGHT_STICK_X);
+            double rx = -gamepadController.getStick(GamepadButton.RIGHT_STICK_X);
             double denominator = Math.max(Math.abs(ly) + Math.abs(lx) + Math.abs(rx), 1);
 
             motorPowerFactor = getDrivePowerFactor(motorPowerFactor);
