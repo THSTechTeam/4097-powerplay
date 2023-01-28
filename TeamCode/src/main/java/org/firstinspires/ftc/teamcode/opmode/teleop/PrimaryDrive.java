@@ -27,7 +27,7 @@ public class PrimaryDrive extends LinearOpMode {
     public static int ARM_MIDDLE_POSITION  = 200;
     public static int ARM_DOWN_POSITION    = 80;
     public static int ARM_REST_POSITION    = 20;
-    public static int MANUAL_ARM_INCREMENT = 5;
+    public static int MANUAL_ARM_INCREMENT = 4;
 
     private final GamepadController gamepadController = new GamepadController();
 
@@ -44,7 +44,7 @@ public class PrimaryDrive extends LinearOpMode {
                 ARM_KF,
                 TICKS_PER_REV,
                 hardwareMap.get(DcMotorEx.class, "motorArm"),
-                DcMotorSimple.Direction.REVERSE
+                DcMotorSimple.Direction.FORWARD
             );
 
         armPIDFController.setMaxMotorPower(1);
@@ -89,7 +89,7 @@ public class PrimaryDrive extends LinearOpMode {
 
             drive.setWeightedDrivePower(
                 gamepad1.left_stick_x,
-                gamepad1.left_stick_y,
+                -gamepad1.left_stick_y,
                 gamepad1.right_stick_x,
                 motorPowerFactor
             );

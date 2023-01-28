@@ -24,19 +24,25 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(30, 30, Math.toRadians(180), Math.toRadians(180), 15)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(10, -11.5, 0))
-                                .splineToConstantHeading(new Vector2d(13, -9.5), Math.toRadians(0))
-                                .addDisplacementMarker(() -> {
-                                        // Follow next score trajectory.
-                                })
-                                .splineToSplineHeading(new Pose2d(19, -9.5, Math.toRadians(60)), Math.toRadians(0))
-                                .addDisplacementMarker(() -> {
-                                        // Drop cone.
-                                })
-                                .waitSeconds(1)
-                                // New sequence, drive backwards.
-                                .splineToSplineHeading(new Pose2d(13, -11.5, 0), Math.toRadians(180))
-                                // Continue to park.
+                        drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
+                                .splineToConstantHeading(new Vector2d(3, 0), Math.toRadians(0))
+                                // .addTemporalMarker(waitForLiftTime, () -> {
+                                // armMotor.setTargetPosition(armAbovePolePosition);
+                                // })
+                                .splineToSplineHeading(new Pose2d(3.8, -11.5, Math.toRadians(-30)), Math.toRadians(-90))
+                                .waitSeconds(0.2)
+                                // .addTemporalMarker(waitForScoreTime, () -> {
+                                //     armMotor.setTargetPosition(armScorePosition);
+                                // })
+                                // .waitSeconds(waitForScoreTime)
+                                // .UNSTABLE_addTemporalMarkerOffset((0.00001), () -> { // Start immediately.
+                                //     armMotor.setTargetPosition(armAbovePolePosition);
+                                // })
+                                .splineToSplineHeading(new Pose2d(0, 1, Math.toRadians(0)), Math.toRadians(90))
+                                .lineToConstantHeading(new Vector2d(35, 0))
+                                .lineToConstantHeading(new Vector2d(20, 0))
+                                .waitSeconds(0.2)
+                                .splineToSplineHeading(new Pose2d(28, 23, Math.toRadians(90)), Math.toRadians(90))
                                 .build()
                         );
 

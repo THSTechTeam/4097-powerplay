@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.trajectorysequence.TrajectorySe
 import static org.firstinspires.ftc.teamcode.DriveConstants.ONE_TILE_DISTANCE;
 
 @Config
-@Autonomous(name="One Cone Right + Park", group="Autonomous")
-public class OneConeAutoRight extends LinearOpMode {
+@Autonomous(name="One Cone Left + Park", group="Autonomous")
+public class OneConeAutoLeft extends LinearOpMode {
     private ParkingLocationAnalyzer parkingLocationAnalyzer;
     private ParkingLocation parkingLocation;
 
@@ -25,21 +25,18 @@ public class OneConeAutoRight extends LinearOpMode {
 
     public static double armPower = 0.3;
     public static int armDrivePosition = 10;
-    public static int armAbovePolePosition = 110;
+    public static int armAbovePolePosition = 100;
     public static int armScorePosition = 65;
-
-    public static double x = 9.2;
-    public static double y = 3.2;
 
     private DcMotorEx armMotor;
 
     private TrajectorySequence scoreConeOnePath;
-     private TrajectorySequence scoreConeTwoPath;
-     private Trajectory resetBeforeParkingPath;
+    private TrajectorySequence scoreConeTwoPath;
+    private Trajectory resetBeforeParkingPath;
 
-     private TrajectorySequence parkingCenterPath;
-     private TrajectorySequence parkLeftPath;
-     private TrajectorySequence parkRightPath;
+    private TrajectorySequence parkingCenterPath;
+    private TrajectorySequence parkLeftPath;
+    private TrajectorySequence parkRightPath;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -58,7 +55,7 @@ public class OneConeAutoRight extends LinearOpMode {
                 .build();
 
         scoreConeTwoPath = drive.trajectorySequenceBuilder(scoreConeOnePath.end())
-                .splineToSplineHeading(new Pose2d(x, y, Math.toRadians(30)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(3.8, -11.5, Math.toRadians(-30)), Math.toRadians(-90))
                 .addTemporalMarker(waitForScoreTime, () -> {
                     armMotor.setTargetPosition(armScorePosition);
                 })
@@ -70,7 +67,7 @@ public class OneConeAutoRight extends LinearOpMode {
                 .build();
 
         resetBeforeParkingPath = drive.trajectoryBuilder(scoreConeTwoPath.end(), Math.toRadians(180)) // Drive backwards.
-                .splineToSplineHeading(new Pose2d(0, 1, Math.toRadians(0)), Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(0, 1, Math.toRadians(0)), Math.toRadians(90))
                 .addDisplacementMarker(() -> {
                     armMotor.setTargetPosition(armDrivePosition);
                 })
@@ -84,14 +81,14 @@ public class OneConeAutoRight extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(35, 0))
                 .lineToConstantHeading(new Vector2d(20, 0))
                 .waitSeconds(0.2)
-                .splineToSplineHeading(new Pose2d(28, 27, Math.toRadians(90)), Math.toRadians(90))
+                .splineToSplineHeading(new Pose2d(28, 23, Math.toRadians(90)), Math.toRadians(90))
                 .build();
 
         parkRightPath = drive.trajectorySequenceBuilder(resetBeforeParkingPath.end())
                 .lineToConstantHeading(new Vector2d(35, 0))
                 .lineToConstantHeading(new Vector2d(20, 0))
                 .waitSeconds(0.2)
-                .splineToSplineHeading(new Pose2d(28, -23, Math.toRadians(-90)), Math.toRadians(-90))
+                .splineToSplineHeading(new Pose2d(28, -27, Math.toRadians(-90)), Math.toRadians(-90))
                 .build();
 
         // vvv The following loop replaces `waitForStart()`. vvv
@@ -115,7 +112,6 @@ public class OneConeAutoRight extends LinearOpMode {
         drive.followTrajectorySequence(scoreConeTwoPath);
         drive.followTrajectory(resetBeforeParkingPath);
 
-        
         if (parkingLocation == ParkingLocation.LEFT) {
             drive.followTrajectorySequence(parkLeftPath);
         } else if (parkingLocation == ParkingLocation.RIGHT) {

@@ -36,10 +36,10 @@ public class DriveConstants {
     public static double LOW_DRIVE_POWER  = 0.5;
     public static double HIGH_DRIVE_POWER = 0.75;
 
-    public static double ARM_KP = 0.0;
+    public static double ARM_KP = 0.01;
     public static double ARM_KI = 0.0;
-    public static double ARM_KD = 0.0;
-    public static double ARM_KF = 0.0;
+    public static double ARM_KD = 0.0002;
+    public static double ARM_KF = 0.1;
 
     public static double ONE_TILE_DISTANCE = 23.0; // in
 
